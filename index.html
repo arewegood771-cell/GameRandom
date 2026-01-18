@@ -1,653 +1,271 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playable Piano BY RIKKU</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-        width: 100vw;
-        height: 100vh;
-      }
-      #root {
-        width: 100%;
-        height: 100%;
-      }
-      .stars-bg {
-        background: linear-gradient(to bottom, #001a4d, #0d47a1, #1976d2);
-        position: relative;
-        overflow: hidden;
-      }
-      .stars-bg::before {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-image: 
-          radial-gradient(2px 2px at 20% 30%, white, transparent),
-          radial-gradient(2px 2px at 60% 70%, white, transparent),
-          radial-gradient(1px 1px at 50% 50%, white, transparent),
-          radial-gradient(1px 1px at 80% 10%, white, transparent),
-          radial-gradient(2px 2px at 90% 60%, white, transparent),
-          radial-gradient(1px 1px at 33% 80%, white, transparent),
-          radial-gradient(1px 1px at 15% 55%, white, transparent);
-        background-size: 200% 200%;
-        animation: twinkle 8s ease-in-out infinite;
-        opacity: 0.7;
-      }
-      @keyframes twinkle {
-        0%, 100% { opacity: 0.7; }
-        50% { opacity: 1; }
-      }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playable Piano BY RIKKU</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { margin:0; padding:0; width:100vw; height:100vh; overflow-x:hidden; background: linear-gradient(to bottom,#001a4d,#0d47a1,#1976d2); }
+#root { width:100%; height:100%; }
+.stars-bg::before {
+  content:''; position:absolute; width:100%; height:100%;
+  background-image: radial-gradient(2px 2px at 20% 30%, white, transparent), radial-gradient(2px 2px at 60% 70%, white, transparent), radial-gradient(1px 1px at 50% 50%, white, transparent), radial-gradient(1px 1px at 80% 10%, white, transparent), radial-gradient(2px 2px at 90% 60%, white, transparent), radial-gradient(1px 1px at 33% 80%, white, transparent), radial-gradient(1px 1px at 15% 55%, white, transparent);
+  background-size: 200% 200%; animation:twinkle 8s ease-in-out infinite; opacity:0.7;
+}
+@keyframes twinkle {0%,100%{opacity:0.7;}50%{opacity:1;}}
+</style>
 </head>
 <body>
-    <div id="root"></div>
-    <script type="text/babel">
-        const Piano = () => {
-          const [isPlaying, setIsPlaying] = React.useState(false);
-          const [selectedSong, setSelectedSong] = React.useState('');
-          const [customSheet, setCustomSheet] = React.useState('');
-          const [virtualPianoInput, setVirtualPianoInput] = React.useState('');
-          const [activeKeys, setActiveKeys] = React.useState(new Set());
-          const [savedSheets, setSavedSheets] = React.useState({});
-          const [newSheetName, setNewSheetName] = React.useState('');
-          const [pressedKeys, setPressedKeys] = React.useState(new Set());
-          const audioContextRef = React.useRef(null);
-          const timeoutsRef = React.useRef([]);
-          const activeOscillatorsRef = React.useRef({});
+<div id="root"></div>
+<script type="text/babel">
 
-          const keyboardMap = {
-            'z': 'C3', 's': 'C#3', 'x': 'D3', 'd': 'D#3', 'c': 'E3',
-            'v': 'F3', 'g': 'F#3', 'b': 'G3', 'h': 'G#3', 'n': 'A3', 'j': 'A#3', 'm': 'B3',
-            'q': 'C4', '2': 'C#4', 'w': 'D4', '3': 'D#4', 'e': 'E4',
-            'r': 'F4', '5': 'F#4', 't': 'G4', '6': 'G#4', 'y': 'A4', '7': 'A#4', 'u': 'B4',
-            'i': 'C5', '9': 'C#5', 'o': 'D5', '0': 'D#5', 'p': 'E5',
-            '[': 'F5', '=': 'F#5', ']': 'G5'
-          };
+const Piano = () => {
+  const [isPlaying, setIsPlaying] = React.useState(false);
+  const [selectedSong, setSelectedSong] = React.useState('');
+  const [customSheet, setCustomSheet] = React.useState('');
+  const [virtualPianoInput, setVirtualPianoInput] = React.useState('');
+  const [activeKeys, setActiveKeys] = React.useState(new Set());
+  const [savedSheets, setSavedSheets] = React.useState({});
+  const [newSheetName, setNewSheetName] = React.useState('');
+  const [pressedKeys, setPressedKeys] = React.useState(new Set());
+  const audioContextRef = React.useRef(null);
+  const timeoutsRef = React.useRef([]);
+  const activeOscillatorsRef = React.useRef({});
 
-          const virtualPianoMap = {
-            '1': 'C', '!': 'C#', 'q': 'C#', '2': 'D', '@': 'D#', 'w': 'D#',
-            '3': 'E', '4': 'F', '$': 'F#', 'r': 'F#', '5': 'G', '%': 'G#',
-            't': 'G#', '6': 'A', '^': 'A#', 'y': 'A#', '7': 'B',
-            '8': 'C', '*': 'C#', 'u': 'C#', '9': 'D', '(': 'D#', 'i': 'D#',
-            '0': 'E', 'o': 'F', 'O': 'F#', 'p': 'F#', 'P': 'G',
-            'a': 'G#', 's': 'A', 'S': 'A#', 'd': 'A#', 'f': 'B',
-            'g': 'C', 'h': 'D', 'H': 'D#', 'j': 'D#', 'k': 'E', 'l': 'F',
-            'z': 'F#', 'x': 'G', 'c': 'G#', 'v': 'A', 'b': 'A#', 'n': 'B', 'm': 'C'
-          };
+  const keyboardMap = {
+    'z': 'C3', 's':'C#3','x':'D3','d':'D#3','c':'E3',
+    'v':'F3','g':'F#3','b':'G3','h':'G#3','n':'A3','j':'A#3','m':'B3',
+    'q':'C4','2':'C#4','w':'D4','3':'D#4','e':'E4',
+    'r':'F4','5':'F#4','t':'G4','6':'G#4','y':'A4','7':'A#4','u':'B4',
+    'i':'C5','9':'C#5','o':'D5','0':'D#5','p':'E5','[':'F5','=':'F#5',']':'G5'
+  };
 
-          const convertVirtualPiano = (input) => {
-            if (!input || !input.trim()) return '';
-            
-            const defaultDuration = 400;
-            const output = [];
-            let currentOctave = 4;
-            let i = 0;
-            
-            while (i < input.length) {
-              const char = input[i];
-              
-              if (char === '[') {
-                const closeIdx = input.indexOf(']', i);
-                if (closeIdx !== -1) {
-                  const content = input.substring(i + 1, closeIdx);
-                  const octaveMatch = content.match(/(\d)([a-zA-Z!@#$%^&*()]+)/);
-                  
-                  if (octaveMatch) {
-                    currentOctave = parseInt(octaveMatch[1]);
-                    const notes = octaveMatch[2];
-                    
-                    for (let note of notes) {
-                      if (virtualPianoMap[note]) {
-                        output.push(`${virtualPianoMap[note]}${currentOctave}-${defaultDuration}`);
-                      }
-                    }
-                  }
-                  i = closeIdx + 1;
-                  continue;
-                }
-              }
-              
-              if (virtualPianoMap[char]) {
-                output.push(`${virtualPianoMap[char]}${currentOctave}-${defaultDuration}`);
-              }
-              
-              i++;
-            }
-            
-            return output.join(' ');
-          };
+  const virtualPianoMap = {
+    '1':'C','!':'C#','2':'D','@':'D#','3':'E','4':'F','$':'F#','5':'G','%':'G#','6':'A','^':'A#','7':'B',
+    '8':'C','*':'C#','9':'D','(':'D#','0':'E','O':'F#','P':'G','a':'G#','s':'A','S':'A#','d':'A#','f':'B','g':'C','h':'D','H':'D#','j':'D#','k':'E','l':'F','z':'F#','x':'G','c':'G#','v':'A','b':'A#','n':'B','m':'C'
+  };
 
-          const generatePianoKeys = () => {
-            const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-            const keys = [];
-            
-            for (let octave = 2; octave <= 6; octave++) {
-              for (let i = 0; i < notes.length; i++) {
-                const note = notes[i];
-                const isWhite = !note.includes('#');
-                const freq = 440 * Math.pow(2, (octave - 4) + (i - 9) / 12);
-                keys.push({ 
-                  note: note + octave, 
-                  freq: freq, 
-                  white: isWhite
-                });
+  const convertVirtualPiano = (input) => {
+    if(!input||!input.trim()) return '';
+    const defaultDuration=400;
+    const output=[];
+    let currentOctave=4,i=0;
+    while(i<input.length){
+      const char=input[i];
+      if(char==='['){
+        const closeIdx=input.indexOf(']',i);
+        if(closeIdx!==-1){
+          const content=input.substring(i+1,closeIdx);
+          const octaveMatch=content.match(/(\d)([a-zA-Z!@#$%^&*()]+)/);
+          if(octaveMatch){
+            currentOctave=parseInt(octaveMatch[1]);
+            const notes=octaveMatch[2];
+            for(let note of notes){
+              if(virtualPianoMap[note]){
+                output.push(`${virtualPianoMap[note]}${currentOctave}-${defaultDuration}`);
               }
             }
-            
-            return keys;
-          };
+          }
+          i=closeIdx+1; continue;
+        }
+      }
+      if(virtualPianoMap[char]) output.push(`${virtualPianoMap[char]}${currentOctave}-${defaultDuration}`);
+      i++;
+    }
+    return output.join(' ');
+  };
 
-          const allKeys = generatePianoKeys();
-          const displayKeys = allKeys.filter(key => {
-            const octave = parseInt(key.note.match(/\d+/)[0]);
-            return octave >= 3 && octave <= 5;
-          });
+  const generatePianoKeys = () => {
+    const notes=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    const keys=[];
+    for(let octave=2;octave<=6;octave++){
+      for(let i=0;i<notes.length;i++){
+        const note=notes[i];
+        const isWhite=!note.includes('#');
+        const freq=440*Math.pow(2,(octave-4)+(i-9)/12);
+        keys.push({note:note+octave,freq:white?440:freq,white:isWhite});
+      }
+    }
+    return keys;
+  };
 
-          React.useEffect(() => {
-            audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
-            
-            return () => {
-              stopPlayback();
-              if (audioContextRef.current) {
-                audioContextRef.current.close();
-              }
-            };
-          }, []);
+  const allKeys=generatePianoKeys();
+  const displayKeys=allKeys.filter(k=>{const o=parseInt(k.note.match(/\d+/)[0]);return o>=3&&o<=5;});
 
-          React.useEffect(() => {
-            const handleKeyDown = (e) => {
-              if (e.repeat) return;
-              
-              const key = e.key.toLowerCase();
-              if (keyboardMap[key] && !isPlaying) {
-                setPressedKeys(prev => {
-                  if (prev.has(key)) return prev;
-                  const newPressed = new Set(prev);
-                  newPressed.add(key);
-                  
-                  const pianoKey = allKeys.find(k => k.note === keyboardMap[key]);
-                  if (pianoKey) {
-                    startNote(pianoKey);
-                  }
-                  
-                  return newPressed;
-                });
-              }
-            };
+  React.useEffect(()=>{
+    audioContextRef.current=new (window.AudioContext||window.webkitAudioContext)();
+    return ()=>{stopPlayback();if(audioContextRef.current) audioContextRef.current.close();};
+  },[]);
 
-            const handleKeyUp = (e) => {
-              const key = e.key.toLowerCase();
-              if (keyboardMap[key]) {
-                setPressedKeys(prev => {
-                  const newPressed = new Set(prev);
-                  newPressed.delete(key);
-                  
-                  const pianoKey = allKeys.find(k => k.note === keyboardMap[key]);
-                  if (pianoKey) {
-                    stopNote(pianoKey);
-                  }
-                  
-                  return newPressed;
-                });
-              }
-            };
+  React.useEffect(()=>{
+    const handleKeyDown=e=>{
+      if(e.repeat) return;
+      const key=e.key.toLowerCase();
+      if(keyboardMap[key]&&!isPlaying){
+        setPressedKeys(prev=>{
+          if(prev.has(key)) return prev;
+          const newPressed=new Set(prev);
+          newPressed.add(key);
+          const pianoKey=allKeys.find(k=>k.note===keyboardMap[key]);
+          if(pianoKey) startNote(pianoKey);
+          return newPressed;
+        });
+      }
+    };
+    const handleKeyUp=e=>{
+      const key=e.key.toLowerCase();
+      if(keyboardMap[key]){
+        setPressedKeys(prev=>{
+          const newPressed=new Set(prev);
+          newPressed.delete(key);
+          const pianoKey=allKeys.find(k=>k.note===keyboardMap[key]);
+          if(pianoKey) stopNote(pianoKey);
+          return newPressed;
+        });
+      }
+    };
+    window.addEventListener('keydown',handleKeyDown);
+    window.addEventListener('keyup',handleKeyUp);
+    return ()=>{window.removeEventListener('keydown',handleKeyDown);window.removeEventListener('keyup',handleKeyUp);};
+  },[isPlaying]);
 
-            window.addEventListener('keydown', handleKeyDown);
-            window.addEventListener('keyup', handleKeyUp);
-            
-            return () => {
-              window.removeEventListener('keydown', handleKeyDown);
-              window.removeEventListener('keyup', handleKeyUp);
-            };
-          }, [isPlaying]);
+  const startNote=(key)=>{
+    if(activeOscillatorsRef.current[key.note]) return;
+    const ctx=audioContextRef.current;
+    const osc1=ctx.createOscillator(),gain1=ctx.createGain();
+    const osc2=ctx.createOscillator(),gain2=ctx.createGain();
+    const osc3=ctx.createOscillator(),gain3=ctx.createGain();
+    const filter=ctx.createBiquadFilter();
+    const masterGain=ctx.createGain();
+    const compressor=ctx.createDynamicsCompressor();
 
-          const saveSheet = () => {
-            if (newSheetName && customSheet) {
-              setSavedSheets(prev => ({
-                ...prev,
-                [newSheetName]: customSheet
-              }));
-              setSelectedSong(newSheetName);
-              setNewSheetName('');
-              alert('Sheet tersimpan! 😹');
-            }
-          };
+    osc1.frequency.value=key.freq; osc1.type='sine';
+    osc2.frequency.value=key.freq*2; osc2.type='sine';
+    osc3.frequency.value=key.freq*3; osc3.type='sine';
 
-          const deleteSheet = (sheetName) => {
-            if (confirm('Delete "' + sheetName + '"? 🥀')) {
-              setSavedSheets(prev => {
-                const newSheets = { ...prev };
-                delete newSheets[sheetName];
-                return newSheets;
-              });
-              if (selectedSong === sheetName) setSelectedSong('');
-            }
-          };
+    osc1.connect(gain1); osc2.connect(gain2); osc3.connect(gain3);
+    gain1.connect(filter); gain2.connect(filter); gain3.connect(filter);
+    filter.connect(masterGain); masterGain.connect(compressor); compressor.connect(ctx.destination);
 
-          const startNote = (key) => {
-            if (activeOscillatorsRef.current[key.note]) return;
-            
-            const ctx = audioContextRef.current;
-            
-            // Main oscillator - piano fundamental
-            const osc1 = ctx.createOscillator();
-            const gain1 = ctx.createGain();
-            
-            // Harmonic oscillators for richer piano sound
-            const osc2 = ctx.createOscillator();
-            const gain2 = ctx.createGain();
-            
-            const osc3 = ctx.createOscillator();
-            const gain3 = ctx.createGain();
-            
-            // Filter for natural tone shaping
-            const filter = ctx.createBiquadFilter();
-            
-            // Master gain
-            const masterGain = ctx.createGain();
-            
-            // Compressor for smooth dynamics
-            const compressor = ctx.createDynamicsCompressor();
+    filter.type='lowpass'; filter.frequency.value=key.freq*4; filter.Q.value=1;
+    gain1.gain.value=0.6; gain2.gain.value=0.2; gain3.gain.value=0.1;
 
-            // Setup oscillators with harmonics
-            osc1.frequency.value = key.freq;
-            osc1.type = 'sine';
-            
-            osc2.frequency.value = key.freq * 2; // First harmonic
-            osc2.type = 'sine';
-            
-            osc3.frequency.value = key.freq * 3; // Second harmonic
-            osc3.type = 'sine';
+    const now=ctx.currentTime;
+    masterGain.gain.setValueAtTime(0,now); masterGain.gain.linearRampToValueAtTime(0.7,now+0.005); masterGain.gain.exponentialRampToValueAtTime(0.5,now+0.1);
 
-            // Connect oscillators to their gains
-            osc1.connect(gain1);
-            osc2.connect(gain2);
-            osc3.connect(gain3);
-            
-            // Mix harmonics
-            gain1.connect(filter);
-            gain2.connect(filter);
-            gain3.connect(filter);
-            
-            filter.connect(masterGain);
-            masterGain.connect(compressor);
-            compressor.connect(ctx.destination);
+    osc1.start(now); osc2.start(now); osc3.start(now);
+    activeOscillatorsRef.current[key.note]={oscillators:[osc1,osc2,osc3],gain:masterGain};
+    setActiveKeys(prev=>{const n=new Set(prev);n.add(key.note);return n;});
+  };
 
-            // Filter settings for piano-like tone
-            filter.type = 'lowpass';
-            filter.frequency.value = key.freq * 4;
-            filter.Q.value = 1;
+  const stopNote=(key)=>{
+    const data=activeOscillatorsRef.current[key.note];
+    if(!data) return;
+    const ctx=audioContextRef.current;
+    const {oscillators,gain}=data;
+    const now=ctx.currentTime;
+    gain.gain.cancelScheduledValues(now);
+    gain.gain.setValueAtTime(gain.gain.value,now);
+    gain.gain.exponentialRampToValueAtTime(0.01,now+0.5);
+    oscillators.forEach(o=>o.stop(now+0.5));
+    setTimeout(()=>{delete activeOscillatorsRef.current[key.note];},550);
+    setActiveKeys(prev=>{const n=new Set(prev);n.delete(key.note);return n;});
+  };
 
-            // Volume levels for harmonics
-            gain1.gain.value = 0.6; // Main tone
-            gain2.gain.value = 0.2; // First harmonic (quieter)
-            gain3.gain.value = 0.1; // Second harmonic (even quieter)
+  const playNoteOnce=(freq,dur=300)=>{
+    const ctx=audioContextRef.current;
+    const osc1=ctx.createOscillator(),gain1=ctx.createGain();
+    const osc2=ctx.createOscillator(),gain2=ctx.createGain();
+    const osc3=ctx.createOscillator(),gain3=ctx.createGain();
+    const filter=ctx.createBiquadFilter(),masterGain=ctx.createGain();
 
-            // Piano envelope: fast attack, sustain, slow release
-            const now = ctx.currentTime;
-            masterGain.gain.setValueAtTime(0, now);
-            masterGain.gain.linearRampToValueAtTime(0.7, now + 0.005); // Fast attack
-            masterGain.gain.exponentialRampToValueAtTime(0.5, now + 0.1); // Sustain level
+    osc1.frequency.value=freq; osc1.type='sine';
+    osc2.frequency.value=freq*2; osc2.type='sine';
+    osc3.frequency.value=freq*3; osc3.type='sine';
 
-            osc1.start(now);
-            osc2.start(now);
-            osc3.start(now);
+    osc1.connect(gain1); osc2.connect(gain2); osc3.connect(gain3);
+    gain1.connect(filter); gain2.connect(filter); gain3.connect(filter);
+    filter.connect(masterGain); masterGain.connect(ctx.destination);
 
-            activeOscillatorsRef.current[key.note] = { 
-              oscillators: [osc1, osc2, osc3], 
-              gain: masterGain 
-            };
-            
-            setActiveKeys(prev => {
-              const newActive = new Set(prev);
-              newActive.add(key.note);
-              return newActive;
-            });
-          };
+    filter.type='lowpass'; filter.frequency.value=freq*4; filter.Q.value=1;
+    gain1.gain.value=0.6; gain2.gain.value=0.2; gain3.gain.value=0.1;
 
-          const stopNote = (key) => {
-            const data = activeOscillatorsRef.current[key.note];
-            if (!data) return;
+    const now=ctx.currentTime,release=dur/1000;
+    masterGain.gain.setValueAtTime(0,now); masterGain.gain.linearRampToValueAtTime(0.7,now+0.005);
+    masterGain.gain.exponentialRampToValueAtTime(0.5,now+0.1);
+    masterGain.gain.exponentialRampToValueAtTime(0.01,now+release);
 
-            const ctx = audioContextRef.current;
-            const { oscillators, gain } = data;
+    osc1.start(now); osc2.start(now); osc3.start(now);
+    osc1.stop(now+release); osc2.stop(now+release); osc3.stop(now+release);
+  };
 
-            // Piano release envelope
-            const now = ctx.currentTime;
-            gain.gain.cancelScheduledValues(now);
-            gain.gain.setValueAtTime(gain.gain.value, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5); // Slow piano release
+  const parseSheet=(sheet)=>{
+    return sheet.trim().split(/\s+/).map(s=>{
+      const p=s.split('-'); if(p.length===2) return {note:p[0].toUpperCase(),duration:parseInt(p[1])||500}; return null;
+    }).filter(x=>x);
+  };
 
-            oscillators.forEach(osc => {
-              osc.stop(now + 0.5);
-            });
-            
-            setTimeout(() => {
-              delete activeOscillatorsRef.current[key.note];
-            }, 550);
+  const stopPlayback=()=>{
+    setIsPlaying(false);
+    timeoutsRef.current.forEach(t=>clearTimeout(t));
+    timeoutsRef.current=[];
+    setActiveKeys(new Set());
+  };
 
-            setActiveKeys(prev => {
-              const newActive = new Set(prev);
-              newActive.delete(key.note);
-              return newActive;
-            });
-          };
+  const playSong=(sheet)=>{
+    stopPlayback();
+    if(!sheet||!sheet.trim()){alert('Sheet kosong 😹');return;}
+    const notes=parseSheet(sheet);
+    let delay=0;
+    setIsPlaying(true);
+    notes.forEach((n,i)=>{
+      const key=allKeys.find(k=>k.note===n.note);
+      const timeout=setTimeout(()=>{
+        if(key) playNoteOnce(key.freq,n.duration);
+        if(i===notes.length-1)setTimeout(()=>setIsPlaying(false),n.duration);
+      },delay);
+      timeoutsRef.current.push(timeout);
+      delay+=n.duration+50;
+    });
+  };
 
-          const playNoteOnce = (frequency, duration) => {
-            duration = duration || 300;
-            const ctx = audioContextRef.current;
-            
-            // Main oscillator
-            const osc1 = ctx.createOscillator();
-            const gain1 = ctx.createGain();
-            
-            // Harmonics
-            const osc2 = ctx.createOscillator();
-            const gain2 = ctx.createGain();
-            
-            const osc3 = ctx.createOscillator();
-            const gain3 = ctx.createGain();
-            
-            const filter = ctx.createBiquadFilter();
-            const masterGain = ctx.createGain();
+  const handlePlay=()=>{playSong(selectedSong&&savedSheets[selectedSong]?savedSheets[selectedSong]:customSheet);};
+  const handleVirtualPianoConvert=()=>{setCustomSheet(convertVirtualPiano(virtualPianoInput)); setSelectedSong(''); alert('Converted! 😹');};
 
-            osc1.frequency.value = frequency;
-            osc1.type = 'sine';
-            
-            osc2.frequency.value = frequency * 2;
-            osc2.type = 'sine';
-            
-            osc3.frequency.value = frequency * 3;
-            osc3.type = 'sine';
+  const isMobile=window.innerWidth<768;
+  const getKeyboardKey=(note)=>{for(let k in keyboardMap)if(keyboardMap[k]===note)return k.toUpperCase(); return '';};
 
-            osc1.connect(gain1);
-            osc2.connect(gain2);
-            osc3.connect(gain3);
-            
-            gain1.connect(filter);
-            gain2.connect(filter);
-            gain3.connect(filter);
-            
-            filter.connect(masterGain);
-            masterGain.connect(ctx.destination);
+  return React.createElement('div',{className:'stars-bg min-h-screen w-full p-2 sm:p-4'},
+    React.createElement('div',{className:'max-w-7xl mx-auto relative z-10'},
+      React.createElement('h1',{className:'text-3xl font-bold text-white text-center mb-4 drop-shadow-lg'},'Playable Piano BY RIKKU'),
+      React.createElement('div',{className:'bg-white/20 backdrop-blur-lg rounded-xl p-3 sm:p-4 shadow-xl mb-4'},
+        React.createElement('textarea',{value:customSheet,onChange:e=>{setCustomSheet(e.target.value); setSelectedSong('');},placeholder:'C4-500 E4-500 G4-500 C5-1000',className:'w-full h-32 p-2 rounded bg-white/30 text-white font-mono resize-none'}),
+        React.createElement('div',{className:'flex gap-2 mt-2'},
+          React.createElement('button',{onClick:handlePlay,disabled:isPlaying,className:'flex-1 bg-green-500 hover:bg-green-600 text-white rounded p-2'},isPlaying?'Playing...':'Play'),
+          React.createElement('button',{onClick:stopPlayback,disabled:!isPlaying,className:'bg-red-500 hover:bg-red-600 text-white rounded p-2'},'Stop')
+        )
+      ),
+      React.createElement('div',{className:'relative flex justify-center'},
+        displayKeys.map((key)=>{
+          const kbKey=getKeyboardKey(key.note); const isActive=activeKeys.has(key.note);
+          if(key.white){
+            return React.createElement('button',{key:key.note,onMouseDown:()=>startNote(key),onMouseUp:()=>stopNote(key),onMouseLeave:()=>stopNote(key),onTouchStart:e=>{e.preventDefault();startNote(key);},onTouchEnd:e=>{e.preventDefault();stopNote(key);},className:'relative border border-gray-800 rounded-b-lg shadow m-[1px] '+(isActive?'bg-yellow-400':'bg-white'),style:{width:isMobile?'2.5rem':'4rem',height:isMobile?'8rem':'16rem'}},
+              React.createElement('div',{className:'absolute w-full text-center bottom-1 text-xs text-gray-700'},key.note+ (kbKey?' ('+kbKey+')':'')))
+          }
+          return React.createElement('button',{key:key.note,onMouseDown:()=>startNote(key),onMouseUp:()=>stopNote(key),onMouseLeave:()=>stopNote(key),onTouchStart:e=>{e.preventDefault();startNote(key);},onTouchEnd:e=>{e.preventDefault();stopNote(key);},className:'absolute z-20 rounded-b-lg shadow '+(isActive?'bg-gray-600':'bg-black'),style:{width:isMobile?'1.5rem':'2.5rem',height:isMobile?'5rem':'10rem',marginLeft:isMobile?'-0.75rem':'-1.25rem'}})
+        })
+      )
+    )
+  );
+};
 
-            filter.type = 'lowpass';
-            filter.frequency.value = frequency * 4;
-            filter.Q.value = 1;
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(Piano));
 
-            gain1.gain.value = 0.6;
-            gain2.gain.value = 0.2;
-            gain3.gain.value = 0.1;
-
-            const now = ctx.currentTime;
-            const release = duration / 1000;
-            
-            masterGain.gain.setValueAtTime(0, now);
-            masterGain.gain.linearRampToValueAtTime(0.7, now + 0.005);
-            masterGain.gain.exponentialRampToValueAtTime(0.5, now + 0.1);
-            masterGain.gain.exponentialRampToValueAtTime(0.01, now + release);
-
-            osc1.start(now);
-            osc2.start(now);
-            osc3.start(now);
-            
-            osc1.stop(now + release);
-            osc2.stop(now + release);
-            osc3.stop(now + release);
-          };
-
-          const parseSheet = (sheet) => {
-            const notes = sheet.trim().split(/\s+/);
-            return notes.map(noteStr => {
-              const parts = noteStr.split('-');
-              if (parts.length === 2) {
-                return { note: parts[0].trim().toUpperCase(), duration: parseInt(parts[1]) || 500 };
-              }
-              return null;
-            }).filter(n => n !== null);
-          };
-
-          const handleMouseDown = (key) => {
-            if (!isPlaying) {
-              startNote(key);
-            }
-          };
-
-          const handleMouseUp = (key) => {
-            if (!isPlaying) {
-              stopNote(key);
-            }
-          };
-
-          const handleMouseLeave = (key) => {
-            if (activeKeys.has(key.note) && !isPlaying) {
-              stopNote(key);
-            }
-          };
-
-          const stopPlayback = () => {
-            setIsPlaying(false);
-            timeoutsRef.current.forEach(t => clearTimeout(t));
-            timeoutsRef.current = [];
-            setActiveKeys(new Set());
-          };
-
-          const playSong = (sheet) => {
-            stopPlayback();
-            
-            if (!sheet || !sheet.trim()) {
-              alert('Gaada music buat dimainkan! 😹');
-              return;
-            }
-            
-            const songNotes = parseSheet(sheet);
-            if (songNotes.length === 0) {
-              alert('Format salah bro! Contoh: C4-500 D4-300 🥀');
-              return;
-            }
-            
-            setIsPlaying(true);
-            let delay = 0;
-
-            songNotes.forEach((item, i) => {
-              const key = allKeys.find(k => k.note === item.note);
-              const timeout = setTimeout(() => {
-                if (key) {
-                  playNoteOnce(key.freq, item.duration);
-                  setActiveKeys(prev => {
-                    const newActive = new Set(prev);
-                    newActive.add(item.note);
-                    return newActive;
-                  });
-                  setTimeout(() => {
-                    setActiveKeys(prev => {
-                      const newActive = new Set(prev);
-                      newActive.delete(item.note);
-                      return newActive;
-                    });
-                  }, item.duration);
-                }
-                if (i === songNotes.length - 1) {
-                  setTimeout(() => setIsPlaying(false), item.duration);
-                }
-              }, delay);
-              
-              timeoutsRef.current.push(timeout);
-              delay += item.duration + 50;
-            });
-          };
-
-          const handlePlay = () => {
-            const sheet = selectedSong && savedSheets[selectedSong] ? savedSheets[selectedSong] : customSheet;
-            if (sheet) {
-              playSong(sheet);
-            } else {
-              alert('Masukin sheet dulu dong! 😹');
-            }
-          };
-
-          const handleVirtualPianoConvert = () => {
-            if (virtualPianoInput.trim()) {
-              const converted = convertVirtualPiano(virtualPianoInput);
-              setCustomSheet(converted);
-              setSelectedSong('');
-              alert('Converted! Udah siap dipake 😹');
-            }
-          };
-
-          const loadToEditor = (name) => {
-            setCustomSheet(savedSheets[name]);
-            setSelectedSong('');
-          };
-
-          const getKeyboardKey = (note) => {
-            for (let key in keyboardMap) {
-              if (keyboardMap[key] === note) {
-                return key.toUpperCase();
-              }
-            }
-            return '';
-          };
-
-          const isMobile = window.innerWidth < 768;
-
-          return React.createElement('div', { 
-            className: 'stars-bg min-h-screen w-full p-2 sm:p-4'
-          },
-            React.createElement('div', { className: 'max-w-7xl mx-auto relative z-10' },
-              React.createElement('h1', { 
-                className: 'text-2xl sm:text-3xl md:text-5xl font-bold text-white text-center mb-3 sm:mb-4 md:mb-8 drop-shadow-lg' 
-              }, 'Piano Playable BY RIKKU'),
-
-              React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4 mb-3 sm:mb-4' },
-                React.createElement('div', { className: 'bg-white/20 backdrop-blur-lg rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-xl' },
-                  React.createElement('h2', { className: 'text-white text-base sm:text-lg font-semibold mb-2 sm:mb-3' }, 'Virtual Piano Converter 💔'),
-                  React.createElement('textarea', {
-                    value: virtualPianoInput,
-                    onChange: (e) => setVirtualPianoInput(e.target.value),
-                    placeholder: 'Paste Virtual Piano format disini... Contoh: [4o] p s g f d5',
-                    className: 'w-full px-2 sm:px-3 py-2 rounded-lg bg-white/30 text-white placeholder-white/60 border border-white/40 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2 h-24 sm:h-32 resize-none font-mono text-xs sm:text-sm shadow-inner'
-                  }),
-                  React.createElement('button', {
-                    onClick: handleVirtualPianoConvert,
-                    disabled: !virtualPianoInput.trim(),
-                    className: 'w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-purple-500 hover:bg-purple-600 disabled:bg-gray-500 disabled:cursor-not-allowed text-white rounded-lg font-semibold text-sm sm:text-base shadow-lg transition-colors'
-                  }, 'Convert & Load 😹')
-                ),
-
-                React.createElement('div', { className: 'bg-white/20 backdrop-blur-lg rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-xl' },
-                  React.createElement('h2', { className: 'text-white text-base sm:text-lg font-semibold mb-2 sm:mb-3' }, 'Sheets yg lu save 🥀'),
-                  
-                  Object.keys(savedSheets).length === 0 ? 
-                    React.createElement('div', { className: 'text-white/70 text-center py-6 sm:py-8 text-xs sm:text-sm' }, 'Kosong wak 🥀') :
-                    React.createElement('div', { className: 'max-h-32 sm:max-h-48 overflow-y-auto mb-3 sm:mb-4 space-y-1 sm:space-y-2' },
-                      Object.keys(savedSheets).map(name =>
-                        React.createElement('div', { key: name, className: 'flex gap-1 sm:gap-2 bg-white/10 p-1.5 sm:p-2 rounded' },
-                          React.createElement('button', {
-                            onClick: () => setSelectedSong(name),
-                            className: 'flex-1 text-left px-2 sm:px-3 py-1.5 sm:py-2 rounded text-xs sm:text-sm transition-colors ' + (selectedSong === name ? 'bg-blue-600 text-white' : 'bg-white/10 text-white hover:bg-white/20')
-                          }, name),
-                          React.createElement('button', {
-                            onClick: () => loadToEditor(name),
-                            className: 'px-2 sm:px-3 py-1.5 sm:py-2 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs sm:text-sm transition-colors'
-                          }, 'Edit'),
-                          React.createElement('button', {
-                            onClick: () => deleteSheet(name),
-                            className: 'p-1.5 sm:p-2 bg-red-500 hover:bg-red-600 text-white rounded text-sm transition-colors'
-                          }, '×')
-                        )
-                      )
-                    ),
-                  
-                  React.createElement('div', { className: 'flex gap-2' },
-                    React.createElement('button', {
-                      onClick: handlePlay,
-                      disabled: isPlaying,
-                      className: 'flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-green-500 hover:bg-green-600 disabled:bg-gray-500 disabled:cursor-not-allowed text-white rounded-lg font-semibold text-sm sm:text-base shadow-lg transition-colors'
-                    }, isPlaying ? 'Playing...' : 'Play 😹'),
-                    React.createElement('button', {
-                      onClick: stopPlayback,
-                      disabled: !isPlaying,
-                      className: 'px-3 sm:px-4 py-2 sm:py-2.5 bg-red-500 hover:bg-red-600 disabled:bg-gray-500 disabled:cursor-not-allowed text-white rounded-lg font-semibold text-sm sm:text-base shadow-lg transition-colors'
-                    }, 'Stop 💔')
-                  )
-                )
-              ),
-
-              React.createElement('div', { className: 'bg-white/20 backdrop-blur-lg rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-xl mb-3 sm:mb-4' },
-                React.createElement('h2', { className: 'text-white text-base sm:text-lg font-semibold mb-2 sm:mb-3' }, 'Custom Sheet Editor 💔'),
-                React.createElement('textarea', {
-                  value: customSheet,
-                  onChange: (e) => { setCustomSheet(e.target.value); setSelectedSong(''); },
-                  placeholder: 'C4-500 E4-500 G4-500 C5-1000',
-                  className: 'w-full px-2 sm:px-3 py-2 rounded-lg bg-white/30 text-white placeholder-white/60 border border-white/40 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2 h-24 sm:h-32 resize-none font-mono text-xs sm:text-sm shadow-inner',
-                  disabled: isPlaying
-                }),
-                
-                React.createElement('div', { className: 'flex gap-2' },
-                  React.createElement('input', {
-                    type: 'text',
-                    value: newSheetName,
-                    onChange: (e) => setNewSheetName(e.target.value),
-                    placeholder: 'Nama sheet...',
-                    className: 'flex-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-white/30 text-white placeholder-white/60 border border-white/40 focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs sm:text-sm shadow-inner'
-                  }),
-                  React.createElement('button', {
-                    onClick: saveSheet,
-                    disabled: !newSheetName || !customSheet,
-                    className: 'px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 disabled:cursor-not-allowed text-white rounded-lg font-semibold text-xs sm:text-sm shadow-lg transition-colors'
-                  }, 'Save 🥀')
-                )
-              ),
-
-              React.createElement('div', { className: 'bg-white/20 backdrop-blur-lg rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-6 overflow-x-auto shadow-xl mb-3 sm:mb-4' },
-                React.createElement('div', { className: 'relative inline-flex min-w-full justify-center' },
-                  displayKeys.map((key, i) => {
-                    const kbKey = getKeyboardKey(key.note);
-                    const isActive = activeKeys.has(key.note);
-                    
-                    return key.white ?
-                      React.createElement('button', {
-                        key: key.note,
-                        onMouseDown: () => handleMouseDown(key),
-                        onMouseUp: () => handleMouseUp(key),
-                        onMouseLeave: () => handleMouseLeave(key),
-                        onTouchStart: (e) => { e.preventDefault(); handleMouseDown(key); },
-                        onTouchEnd: (e) => { e.preventDefault(); handleMouseUp(key); },
-                        className: 'relative border-2 border-gray-800 rounded-b-lg transition-all shadow-lg select-none ' + (isActive ? 'bg-gradient-to-b from-yellow-300 to-yellow-500 scale-95' : 'bg-gradient-to-b from-white to-gray-200 hover:from-gray-100 hover:to-gray-300'),
-                        style: { width: isMobile ? '2.5rem' : '4rem', height: isMobile ? '8rem' : '16rem' }
-                      },
-                        React.createElement('div', { className: 'absolute left-0 right-0 text-center' , style: { bottom: isMobile ? '0.5rem' : '1rem' }},
-                          React.createElement('div', { className: 'text-gray-700 font-bold text-xs sm:text-sm' }, key.note),
-                          kbKey && React.createElement('div', { className: 'text-gray-500 text-xs mt-0.5' }, kbKey)
-                        )
-                      ) :
-                      React.createElement('button', {
-                        key: key.note,
-                        onMouseDown: () => handleMouseDown(key),
-                  React.createElement('div', { className: 'mt-2 sm:mt-3 p-2 sm:p-3 bg-green-500/30 rounded-lg border border-green-400/50' },
-                  React.createElement('p', { className: 'font-semibold mb-1' }, 'Cobain deh ini 😹:'),
-                  React.createElement('code', { className: 'text-xs block bg-black/30 p-2 rounded overflow-x-auto' }, 
-                    'G4-400 A4-400 C5-400 A4-400 E5-600 D5-400 C5-600 A4-400 G4-400 A4-400 C5-600 D5-600 C5-600 A4-800'
-                  )
-                )
-              )
-            )
-          );
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(React.createElement(Piano));
-    </script>
+</script>
 </body>
-</html>
 </html>
