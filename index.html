@@ -158,25 +158,6 @@
 
           React.useEffect(() => {
             audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // Force resume on any user interaction
-            const resumeAudio = async () => {
-              if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
-                try {
-                  await audioContextRef.current.resume();
-                  console.log('AudioContext resumed successfully! 😹');
-                } catch (e) {
-                  console.error('Resume failed 💔', e);
-                }
-              }
-            };
-            
-            // Add multiple event listeners
-            const events = ['click', 'touchstart', 'keydown', 'mousedown'];
-            events.forEach(event => {
-              document.addEventListener(event, resumeAudio);
-            });
-            
             loadSavedSheets();
             
             const handleKeyDown = (e) => {
@@ -194,14 +175,11 @@
             return () => {
               stopPlayback();
               window.removeEventListener('keydown', handleKeyDown);
-              events.forEach(event => {
-                document.removeEventListener(event, resumeAudio);
-              });
               if (audioContextRef.current) {
                 audioContextRef.current.close();
               }
             };
-          }, []);
+          }, [isPlaying]);
 
           const loadSavedSheets = () => {
             try {
@@ -236,39 +214,29 @@
           };
 
           const playNote = (frequency, duration) => {
-            if (!audioContextRef.current) {
-              console.error('AudioContext belum ready 💔');
-              return;
-            }
-            
             duration = duration || 300;
             const ctx = audioContextRef.current;
-            
-            try {
-              const osc = ctx.createOscillator();
-              const gain = ctx.createGain();
-              const filter = ctx.createBiquadFilter();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            const filter = ctx.createBiquadFilter();
 
-              osc.connect(filter);
-              filter.connect(gain);
-              gain.connect(ctx.destination);
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(ctx.destination);
 
-              osc.frequency.value = frequency;
-              osc.type = 'triangle';
-              filter.type = 'lowpass';
-              filter.frequency.value = frequency * 4;
+            osc.frequency.value = frequency;
+            osc.type = 'triangle';
+            filter.type = 'lowpass';
+            filter.frequency.value = frequency * 4;
 
-              const release = duration / 1000;
-              gain.gain.setValueAtTime(0, ctx.currentTime);
-              gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.002);
-              gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.1);
-              gain.gain.linearRampToValueAtTime(0, ctx.currentTime + release);
+            const release = duration / 1000;
+            gain.gain.setValueAtTime(0, ctx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.002);
+            gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.1);
+            gain.gain.linearRampToValueAtTime(0, ctx.currentTime + release);
 
-              osc.start(ctx.currentTime);
-              osc.stop(ctx.currentTime + release);
-            } catch (e) {
-              console.error('Error playing note 💔', e);
-            }
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + release);
           };
 
           const parseSheet = (sheet) => {
@@ -282,16 +250,11 @@
             }).filter(n => n !== null);
           };
 
-          const handleKeyPress = React.useCallback(async (key) => {
-            // Resume AudioContext if suspended
-            if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
-              await audioContextRef.current.resume();
-            }
-            
+          const handleKeyPress = (key) => {
             playNote(key.freq);
             setActiveKey(key.note);
             setTimeout(() => setActiveKey(null), 200);
-          }, []);
+          };
 
           const stopPlayback = () => {
             setIsPlaying(false);
@@ -300,23 +263,8 @@
             setActiveKey(null);
           };
 
-          const playSong = async (sheet) => {
+          const playSong = (sheet) => {
             stopPlayback();
-            
-            // Force resume AudioContext
-            if (audioContextRef.current) {
-              console.log('AudioContext state before play:', audioContextRef.current.state);
-              if (audioContextRef.current.state !== 'running') {
-                try {
-                  await audioContextRef.current.resume();
-                  console.log('AudioContext resumed! State:', audioContextRef.current.state);
-                } catch (e) {
-                  console.error('Failed to resume AudioContext 💔', e);
-                  alert('Audio ga bisa jalan! Coba klik piano key dulu terus play lagi 🥀');
-                  return;
-                }
-              }
-            }
             
             if (!sheet || !sheet.trim()) {
               alert('Gaada music buat dimainkan! 😹');
@@ -324,8 +272,6 @@
             }
             
             const songNotes = parseSheet(sheet);
-            console.log('Parsed notes:', songNotes);
-            
             if (songNotes.length === 0) {
               alert('Format salah bro! Contoh: C4-500 D4-300 🥀');
               return;
@@ -338,17 +284,11 @@
               const key = allKeys.find(k => k.note === item.note);
               const timeout = setTimeout(() => {
                 if (key) {
-                  console.log('Playing note:', item.note, 'freq:', key.freq, 'duration:', item.duration);
                   playNote(key.freq, item.duration);
                   setActiveKey(item.note);
                   setTimeout(() => setActiveKey(null), item.duration);
-                } else {
-                  console.log('Note not found:', item.note);
                 }
-                if (i === songNotes.length - 1) {
-                  console.log('Song finished 😹');
-                  setIsPlaying(false);
-                }
+                if (i === songNotes.length - 1) setIsPlaying(false);
               }, delay);
               
               timeoutsRef.current.push(timeout);
@@ -356,35 +296,9 @@
             });
           };
 
-          const handlePlay = async () => {
-            console.log('Play button clicked 😹');
-            console.log('Selected song:', selectedSong);
-            console.log('Custom sheet:', customSheet);
-            console.log('Saved sheets:', savedSheets);
-            
-            // Resume AudioContext if suspended
-            if (audioContextRef.current) {
-              console.log('AudioContext state:', audioContextRef.current.state);
-              if (audioContextRef.current.state === 'suspended') {
-                try {
-                  await audioContextRef.current.resume();
-                  console.log('AudioContext resumed! 😹');
-                } catch (e) {
-                  console.error('Failed to resume 💔', e);
-                  alert('Audio gagal start! Coba klik piano key dulu 🥀');
-                  return;
-                }
-              }
-            } else {
-              console.error('AudioContext tidak ada! 💔');
-              alert('Audio belum ready! Refresh page ya 🥀');
-              return;
-            }
-            
+          const handlePlay = () => {
             const sheet = selectedSong && savedSheets[selectedSong] ? savedSheets[selectedSong] : customSheet;
-            console.log('Sheet to play:', sheet);
-            
-            if (sheet && sheet.trim()) {
+            if (sheet) {
               playSong(sheet);
             } else {
               alert('Masukin sheet dulu dong! 😹');
@@ -392,19 +306,11 @@
           };
 
           const handleVirtualPianoConvert = () => {
-            console.log('Converting Virtual Piano input 😹');
             if (virtualPianoInput.trim()) {
               const converted = convertVirtualPiano(virtualPianoInput);
-              console.log('Converted result:', converted);
               setCustomSheet(converted);
               setSelectedSong('');
-              if (converted && converted.trim()) {
-                alert('Converted! Udah siap dipake 😹\n\nHasil: ' + converted.substring(0, 100) + '...');
-              } else {
-                alert('Conversion gagal! Format mungkin salah 💔');
-              }
-            } else {
-              alert('Input kosong bro! 🥀');
+              alert('Converted! Udah siap dipake 😹');
             }
           };
 
