@@ -8,10 +8,16 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { margin: 0; padding: 0; overflow-x: hidden; }
+        #root { width: 100%; min-height: 100vh; }
+    </style>
 </head>
 <body>
     <div id="root"></div>
     <script type="text/babel" src="app.jsx"></script>
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>
