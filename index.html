@@ -201,7 +201,7 @@
                 audioContextRef.current.close();
               }
             };
-          }, [isPlaying]);
+          }, []);
 
           const loadSavedSheets = () => {
             try {
@@ -282,7 +282,7 @@
             }).filter(n => n !== null);
           };
 
-          const handleKeyPress = async (key) => {
+          const handleKeyPress = React.useCallback(async (key) => {
             // Resume AudioContext if suspended
             if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
               await audioContextRef.current.resume();
@@ -291,7 +291,7 @@
             playNote(key.freq);
             setActiveKey(key.note);
             setTimeout(() => setActiveKey(null), 200);
-          };
+          }, []);
 
           const stopPlayback = () => {
             setIsPlaying(false);
