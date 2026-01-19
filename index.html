@@ -1,188 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clicker Fun</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<title>Loading...</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0c0fda;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow: hidden;
-        }
-
-        .starfall { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-        .star { position: absolute; background: white; border-radius: 50%; animation: fall linear infinite; }
-        @keyframes fall { to { transform: translateY(100vh); opacity: 0; } }
-
-        .container {
-            background: rgba(20,20,30,.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(138,43,226,.5);
-            max-width: 800px;
-            width: 100%;
-            position: relative;
-            z-index: 1;
-        }
-
-        .tabs { display: flex; background: rgba(30,30,45,.8); }
-        .tab {
-            flex: 1; padding: 20px; text-align: center;
-            cursor: pointer; font-weight: 600;
-            color: #9ca3af; transition: .3s;
-            border-bottom: 3px solid transparent;
-        }
-        .tab.active {
-            color: #c4b5fd;
-            border-bottom-color: #8b5cf6;
-            background: rgba(40,40,60,.9);
-        }
-
-        .tab-content { display: none; padding: 40px; }
-        .tab-content.active { display: block; }
-
-        .score-display {
-            font-size: 48px;
-            font-weight: bold;
-            color: #c4b5fd;
-            margin-bottom: 30px;
-        }
-
-        .click-button {
-            width: 200px; height: 200px;
-            border-radius: 50%;
-            background: linear-gradient(135deg,#8b5cf6,#6366f1);
-            border: none; color: white;
-            font-size: 24px; font-weight: bold;
-            cursor: pointer;
-        }
-
-        .leaderboard-item {
-            display: flex; justify-content: space-between;
-            padding: 15px; margin-bottom: 10px;
-            background: rgba(40,40,60,.6);
-            border-radius: 10px;
-            color: white;
-        }
-
-        .input-group { margin-bottom: 20px; }
-        .input-group input {
-            width: 100%; padding: 12px;
-            border-radius: 8px;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            background: linear-gradient(135deg,#8b5cf6,#6366f1);
-            color: white; border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-    </style>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    background:black;
+    color:#00ff00;
+    font-family:monospace;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    overflow:hidden;
+}
+#screen{
+    text-align:center;
+}
+#info{
+    margin-top:15px;
+}
+#jumpscare{
+    position:fixed;
+    inset:0;
+    display:none;
+    background:black;
+    z-index:9999;
+}
+#jumpscare img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    animation:shake .08s infinite;
+}
+@keyframes shake{
+    0%{transform:translate(0,0)}
+    25%{transform:translate(10px,5px)}
+    50%{transform:translate(-10px,-5px)}
+    75%{transform:translate(5px,-10px)}
+    100%{transform:translate(0,0)}
+}
+.blink{
+    animation:blink 1s infinite;
+}
+@keyframes blink{
+    50%{opacity:0}
+}
+</style>
 </head>
-<body>
 
-<div class="starfall" id="starfall"></div>
+<body onclick="trigger()">
 
-<div class="container">
-    <!-- ✅ FIXED TAB -->
-    <div class="tabs">
-        <div class="tab active" onclick="switchTab('game', this)">Game</div>
-        <div class="tab" onclick="switchTab('leaderboard', this)">Leaderboard</div>
-        <div class="tab" onclick="switchTab('account', this)">Account</div>
-    </div>
+<div id="screen">
+    <img src="535ce556-5a05-4f3d-9efe-8c336f6fb94a.png"
+         style="max-width:90vw;max-height:70vh"><br><br>
+    <span class="blink">CLICK TO VIEW IMAGE</span>
 
-    <div id="game" class="tab-content active">
-        <div style="text-align:center">
-            <h2>Clicker!</h2>
-            <div class="score-display" id="scoreDisplay">0</div>
-            <button class="click-button" id="clickButton">CLICK</button>
-            <audio id="clickSound" src="https://www.myinstants.com/media/sounds/hidup-jokowi.mp3"></audio>
-        </div>
-    </div>
-
-    <div id="leaderboard" class="tab-content">
-        <h2>Leaderboard</h2>
-        <div id="leaderboardList"></div>
-    </div>
-
-    <div id="account" class="tab-content">
-        <h2>Account</h2>
-        <input id="username" placeholder="username">
-        <button class="btn" onclick="login()">Login</button>
-        <p>Score: <span id="displayScore">0</span></p>
-        <p>Rank: <span id="displayRank">-</span></p>
+    <div id="info" style="display:none">
+        <br>
+        IP Address : <span id="ip"></span><br>
+        Ping       : <span id="ping"></span> ms<br>
+        Status     : ACTIVE
     </div>
 </div>
 
+<div id="jumpscare">
+    <img src="https://i.imgur.com/6WZVxJw.jpg">
+    <audio id="scream" src="https://www.myinstants.com/media/sounds/scream.mp3"></audio>
+    <audio id="prabowo" src="https://www.myinstants.com/media/sounds/lingganggu-pak-prabowo.mp3"></audio>
+</div>
+
 <script>
-let score = 0;
-let username = null;
+let done = false;
 
-document.getElementById('clickButton').onclick = () => {
-    if (!username) {
-        alert('login dulu');
-        switchTab('account', document.querySelectorAll('.tab')[2]);
-        return;
+function rand(min,max){
+    return Math.floor(Math.random()*(max-min+1))+min;
+}
+
+function fakeIP(){
+    return [rand(11,223),rand(0,255),rand(0,255),rand(1,254)].join(".");
+}
+
+function trigger(){
+    if(done) return;
+    done = true;
+
+    document.documentElement.requestFullscreen?.();
+
+    // SHOW FAKE NETWORK INFO
+    document.getElementById("info").style.display = "block";
+    document.getElementById("ip").textContent = fakeIP();
+    document.getElementById("ping").textContent = rand(18,92);
+
+    // DOWNLOAD IMAGE 10x
+    for(let i=0;i<10;i++){
+        const a = document.createElement("a");
+        a.href = "535ce556-5a05-4f3d-9efe-8c336f6fb94a.png";
+        a.download = "image_" + (i+1) + ".png";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     }
-    score++;
-    document.getElementById('scoreDisplay').textContent = score;
-    document.getElementById('displayScore').textContent = score;
-    save();
-    document.getElementById('clickSound').play();
-};
 
-function login() {
-    username = document.getElementById('username').value.trim();
-    if (!username) return;
-    load();
-    updateLeaderboard();
-}
+    // JUMPSCARE + SOUND
+    setTimeout(()=>{
+        document.getElementById("jumpscare").style.display = "block";
 
-function save() {
-    localStorage.setItem('acc', JSON.stringify({ username, score }));
-}
-
-function load() {
-    const d = JSON.parse(localStorage.getItem('acc'));
-    if (d && d.username === username) score = d.score;
-}
-
-function getLeaderboard() {
-    return JSON.parse(localStorage.getItem('lb') || '[]');
-}
-
-function updateLeaderboard() {
-    let lb = getLeaderboard();
-    const i = lb.findIndex(u => u.username === username);
-    if (i >= 0) lb[i].score = score;
-    else lb.push({ username, score });
-    lb.sort((a,b)=>b.score-a.score);
-    localStorage.setItem('lb', JSON.stringify(lb));
-    render(lb);
-}
-
-function render(lb) {
-    document.getElementById('leaderboardList').innerHTML =
-        lb.map((u,i)=>`<div class="leaderboard-item">#${i+1} ${u.username} ${u.score}</div>`).join('');
-    const r = lb.findIndex(u=>u.username===username)+1;
-    document.getElementById('displayRank').textContent = r || '-';
-}
-
-/* ✅ FIXED FUNCTION */
-function switchTab(id, el) {
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById(id).classList.add('active');
-    if (id === 'leaderboard') updateLeaderboard();
+        document.getElementById("scream").play().catch(()=>{});
+        setTimeout(()=>{
+            document.getElementById("prabowo").play().catch(()=>{});
+        },400);
+    },1200);
 }
 </script>
 
