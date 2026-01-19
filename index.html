@@ -8,7 +8,6 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <style>
         body { 
             margin: 0; 
@@ -32,7 +31,34 @@
     <div id="root"></div>
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
-        const { Send, Sparkles, Trash2, Heart } = lucide;
+
+        // SVG Icon Components
+        const SendIcon = () => (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        );
+
+        const SparklesIcon = ({ size = 20 }) => (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"></path>
+            <path d="M19 12l.75 2.25L22 15l-2.25.75L19 18l-.75-2.25L16 15l2.25-.75L19 12z"></path>
+          </svg>
+        );
+
+        const TrashIcon = ({ size = 18 }) => (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        );
+
+        const HeartIcon = ({ size = 20 }) => (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        );
 
         function AnimeAIChatbot() {
           const [messages, setMessages] = useState([
@@ -199,7 +225,7 @@
                       <div>
                         <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
                           Rikku-san
-                          <Sparkles size={20} className="text-fuchsia-300" />
+                          <span className="text-fuchsia-300"><SparklesIcon size={20} /></span>
                         </h1>
                         <p className="text-fuchsia-200 text-xs sm:text-sm font-medium">AI Assistant</p>
                         <p className="text-fuchsia-300 text-xs hidden sm:block">Web Search • Image Gen • Calculator</p>
@@ -211,12 +237,12 @@
                         className={`p-2 sm:p-3 rounded-full transition-all backdrop-blur-sm border ${
                           soundEnabled ? 'bg-fuchsia-600/40 border-fuchsia-400/50' : 'bg-black/40 border-fuchsia-500/30'
                         }`} title="Toggle Sound">
-                        <Sparkles size={18} className="text-fuchsia-300" />
+                        <span className="text-fuchsia-300"><SparklesIcon size={18} /></span>
                       </button>
                       <button onClick={clearChat}
                         className="p-2 sm:p-3 rounded-full bg-black/40 hover:bg-black/60 transition-all backdrop-blur-sm border border-fuchsia-500/30 hover:border-fuchsia-400/50"
                         title="Clear Chat">
-                        <Trash2 size={18} className="text-fuchsia-300" />
+                        <span className="text-fuchsia-300"><TrashIcon size={18} /></span>
                       </button>
                     </div>
                   </div>
@@ -245,7 +271,7 @@
                           : 'order-2 mr-2 border-fuchsia-500/50 bg-black'
                       }`}>
                         {message.role === 'user' ? (
-                          <Heart size={20} className="text-gray-300" />
+                          <span className="text-gray-300"><HeartIcon size={20} /></span>
                         ) : (
                           <img src={profileImage} alt="Rikku-san" className="w-full h-full object-cover" />
                         )}
@@ -284,7 +310,7 @@
                           ? 'bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 hover:scale-110 shadow-lg shadow-fuchsia-500/30'
                           : 'bg-gray-800/50 border border-gray-700'
                       } disabled:cursor-not-allowed`}>
-                      <Send size={24} className="text-white" />
+                      <span className="text-white"><SendIcon /></span>
                     </button>
                   </div>
                 </div>
@@ -294,7 +320,7 @@
         }
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<AnimeAIChatbot />);
+        root.render(React.createElement(AnimeAIChatbot));
     </script>
 </body>
 </html>
