@@ -3,181 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnimeStream - Direktori Anime Legal Indonesia</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>AnimeStream ID - Official Aggregator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ... (Keeping your existing CSS) ... */
+        :root {
+            --primary: #e50914;
+            --bg: #0b0b0b;
+            --card-bg: #181818;
+            --text: #ffffff;
+            --text-dim: #b3b3b3;
+            --bstation: #00aeef;
+            --youtube: #ff0000;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background: #0f0f0f; color: #fff; line-height: 1.6; }
-        header { background: rgba(0, 0, 0, 0.95); padding: 1rem 2rem; position: sticky; top: 0; z-index: 100; border-bottom: 2px solid #e50914; }
-        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.8rem; font-weight: 700; color: #e50914; }
-        nav a { color: #fff; text-decoration: none; margin-left: 2rem; font-weight: 500; transition: color 0.3s; }
-        nav a:hover { color: #e50914; }
-        .banner { position: relative; height: 400px; background: linear-gradient(to bottom, transparent, #0f0f0f), url('https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1600&h=500&fit=crop') center/cover; display: flex; align-items: center; }
-        .banner-content { max-width: 1400px; margin: 0 auto; padding: 0 2rem; width: 100%; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
-        .search-box { width: 100%; max-width: 500px; padding: 0.8rem; background: #2a2a2a; border: 2px solid #3a3a3a; border-radius: 5px; color: #fff; margin-bottom: 2rem; }
-        .genre-filter, .season-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-        .genre-btn, .tab-btn { padding: 0.5rem 1rem; background: #2a2a2a; border: 1px solid #3a3a3a; color: #fff; border-radius: 20px; cursor: pointer; transition: 0.3s; }
-        .genre-btn.active, .tab-btn.active { background: #e50914; border-color: #e50914; }
-        .anime-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; }
-        .anime-card { background: #1a1a1a; border-radius: 10px; overflow: hidden; cursor: pointer; transition: 0.3s; }
-        .anime-card:hover { transform: translateY(-10px); }
-        .anime-poster { width: 100%; height: 280px; object-fit: cover; }
-        .anime-info { padding: 1rem; }
-        .video-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; padding: 20px; overflow-y: auto;}
-        .video-modal.active { display: flex; }
-        .video-wrapper { width: 100%; max-width: 900px; background: #1a1a1a; border-radius: 10px; overflow: hidden; }
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        .external-btn { display: block; width: fit-content; margin: 50px auto; padding: 15px 30px; background: #00aeef; color: white; border-radius: 5px; text-decoration: none; font-weight: bold; }
-        .close-btn { float: right; padding: 10px; cursor: pointer; font-size: 20px; color: white; background: none; border: none; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+
+        /* Navigation */
+        header { 
+            background: rgba(0, 0, 0, 0.9); 
+            padding: 1rem 5%; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+        nav a { color: var(--text); text-decoration: none; margin-left: 20px; font-size: 0.9rem; transition: 0.3s; }
+        nav a:hover { color: var(--primary); }
+
+        /* Banner */
+        .hero {
+            height: 50vh;
+            background: linear-gradient(to bottom, transparent, var(--bg)), url('https://images.unsplash.com/photo-1541562232579-512a21360020?w=1600') center/cover;
+            display: flex;
+            align-items: flex-end;
+            padding: 0 5% 50px;
+        }
+        .hero-content h1 { font-size: 3rem; margin-bottom: 10px; }
+
+        /* Filters & Search */
+        .controls { padding: 2rem 5%; }
+        .search-bar { 
+            width: 100%; 
+            max-width: 600px; 
+            padding: 12px 20px; 
+            background: var(--card-bg); 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+            color: white; 
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .genre-wrap { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .genre-btn { 
+            padding: 6px 18px; 
+            background: var(--card-bg); 
+            border: 1px solid #333; 
+            color: var(--text-dim); 
+            border-radius: 20px; 
+            cursor: pointer; 
+            white-space: nowrap;
+            transition: 0.3s;
+        }
+        .genre-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* Grid */
+        .section-title { padding: 0 5%; margin: 20px 0; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+        .section-title::before { content: ""; width: 4px; height: 20px; background: var(--primary); display: inline-block; }
+
+        .anime-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+            gap: 20px; 
+            padding: 0 5% 40px; 
+        }
+        .anime-card { 
+            background: var(--card-bg); 
+            border-radius: 8px; 
+            overflow: hidden; 
+            cursor: pointer; 
+            transition: 0.3s;
+        }
+        .anime-card:hover { transform: scale(1.05); }
+        .poster { width: 100%; height: 250px; object-fit: cover; }
+        .info { padding: 12px; }
+
+        /* Modal & Player */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.95); 
+            z-index: 2000; 
+            padding: 20px; 
+            overflow-y: auto; 
+        }
+        .modal.active { display: flex; justify-content: center; }
+        .modal-content { width: 100%; max-width: 1000px; background: #111; border-radius: 12px; overflow: hidden; margin-top: 20px; height: fit-content; }
+        
+        .video-container { width: 100%; aspect-ratio: 16/9; background: #000; }
+        .video-container iframe { width: 100%; height: 100%; border: none; }
+
+        .episode-section { padding: 20px; background: #181818; }
+        .ep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; margin-top: 15px; }
+        .ep-btn { 
+            background: #333; 
+            border: none; 
+            color: white; 
+            padding: 10px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: 0.2s;
+        }
+        .ep-btn:hover { background: #444; }
+        .ep-btn.active { background: var(--primary); }
+
+        .source-selector { padding: 15px 20px; display: flex; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #222; background: #141414; }
+        .source-btn { padding: 8px 16px; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; font-size: 0.8rem; color: white; }
+        .source-btn.yt { background: var(--youtube); }
+        .source-btn.bst { background: var(--bstation); }
+
+        .details { padding: 20px; }
+        .close-modal { position: absolute; top: 20px; right: 20px; background: white; border: none; padding: 10px 15px; border-radius: 50%; cursor: pointer; z-index: 2100; font-weight: bold; }
+
+        @media (max-width: 600px) {
+            .hero-content h1 { font-size: 2rem; }
+            .anime-grid { grid-template-columns: repeat(2, 1fr); }
+        }
     </style>
 </head>
 <body>
 
+<button class="close-modal" id="closeBtn" style="display:none;" onclick="app.close()">✕</button>
+
 <header>
-    <div class="nav-container">
-        <div class="logo">AnimeStream</div>
-        <nav><a href="#">Home</a><a href="#">Trending</a><a href="#">Jadwal</a></nav>
-    </div>
+    <div class="logo">AnimeStream</div>
+    <nav><a href="#">Home</a><a href="#">Jadwal</a></nav>
 </header>
 
-<div class="banner">
-    <div class="banner-content">
-        <h1>Nonton Anime Legal</h1>
-        <p>Agregator resmi dari Muse Indonesia, Ani-One, dan Bstation.</p>
+<div class="hero">
+    <div class="hero-content">
+        <h1>Nonton Legal, Dukung Kreator</h1>
     </div>
 </div>
 
-<div class="container">
-    <input type="text" class="search-box" id="searchBox" placeholder="🔍 Cari anime..." onkeyup="handleSearch()">
-
-    <div class="genre-filter" id="genreFilter">
-        <button class="genre-btn active" onclick="filterByGenre('all')">Semua</button>
-        <button class="genre-btn" onclick="filterByGenre('action')">Action</button>
-        <button class="genre-btn" onclick="filterByGenre('fantasy')">Fantasy</button>
-        <button class="genre-btn" onclick="filterByGenre('romance')">Romance</button>
-    </div>
-
-    <div class="season-tabs">
-        <button class="tab-btn active" onclick="switchTab('winter2024')">Winter 2024</button>
-        <button class="tab-btn" onclick="switchTab('popular')">Popular</button>
-    </div>
-
-    <div id="winter2024" class="tab-content active">
-        <div class="anime-grid" id="grid-winter2024"></div>
-    </div>
-    <div id="popular" class="tab-content">
-        <div class="anime-grid" id="grid-popular"></div>
-    </div>
+<div class="controls">
+    <input type="text" class="search-bar" id="searchBox" placeholder="Cari anime..." onkeyup="app.search()">
+    <div class="genre-wrap" id="genreList"></div>
 </div>
 
-<div class="video-modal" id="videoModal">
-    <div class="video-wrapper">
-        <button class="close-btn" onclick="closeVideo()">✕ Close</button>
-        <div id="playerArea"></div>
-        <div style="padding: 20px;">
-            <h3 id="modalTitle"></h3>
-            <p id="modalMeta" style="color: #888; font-size: 0.9rem;"></p>
+<div class="anime-grid" id="animeGrid"></div>
+
+<div class="modal" id="videoModal">
+    <div class="modal-content">
+        <div id="playerArea" class="video-container"></div>
+        <div class="source-selector" id="sourceSelector"></div>
+        <div class="episode-section">
+            <h4 id="epTitleDisplay">Pilih Episode:</h4>
+            <div class="ep-grid" id="episodeGrid"></div>
+        </div>
+        <div class="details">
+            <h2 id="mTitle"></h2>
+            <p id="mDesc" style="color: var(--text-dim); margin-top: 10px;"></p>
         </div>
     </div>
 </div>
 
 <script>
-    const animeDatabase = {
-        winter2024: [
-            {title: 'Frieren: Beyond Journey\'s End', rating: 9.3, eps: 28, genre: 'fantasy', img: 'https://images.unsplash.com/photo-1614728263952-84ea206f2c40?w=400', type: 'youtube', videoId: 'fzQ6gRAEoy0'},
-            {title: 'Solo Leveling', rating: 8.9, eps: 12, genre: 'action', img: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400', type: 'external', url: 'https://www.bilibili.tv/id/play/2097863'},
-            {title: 'A Sign of Affection', rating: 8.3, eps: 12, genre: 'romance', img: 'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?w=400', type: 'youtube', videoId: 'e8YBesRKq_U'}
+    const app = {
+        genres: ["All", "Action", "Fantasy", "Comedy", "Sports", "Drama"],
+        db: [
+            { 
+                title: "Solo Leveling", 
+                genre: "Action", 
+                rating: "8.9", 
+                img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400",
+                desc: "Dunia di mana Hunter harus melawan monster. Sung Jin-Woo menemukan cara rahasia untuk naik level sendirian.",
+                episodes: [
+                    { num: 1, sources: [{ type: 'yt', label: 'Ani-One', id: 'fzQ6gRAEoy0' }, { type: 'bst', label: 'Bstation', url: 'https://bilibili.tv' }] },
+                    { num: 2, sources: [{ type: 'yt', label: 'Ani-One', id: 'fzQ6gRAEoy0' }] },
+                    { num: 3, sources: [{ type: 'bst', label: 'Bstation', url: 'https://bilibili.tv' }] }
+                ]
+            },
+            { 
+                title: "Frieren", 
+                genre: "Fantasy", 
+                rating: "9.3", 
+                img: "https://images.unsplash.com/photo-1614728263952-84ea206f2c40?w=400",
+                desc: "Setelah sepuluh tahun berpetualang, Frieren sang penyihir memulai perjalanan baru untuk memahami manusia.",
+                episodes: [
+                    { num: 1, sources: [{ type: 'yt', label: 'Muse ID', id: 'fzQ6gRAEoy0' }] },
+                    { num: 2, sources: [{ type: 'yt', label: 'Muse ID', id: 'fzQ6gRAEoy0' }] }
+                ]
+            }
         ],
-        popular: [
-            {title: 'One Piece', rating: 9.1, eps: 1100, genre: 'action', img: 'https://images.unsplash.com/photo-1613376023733-0a73315d9b06?w=400', type: 'external', url: 'https://www.iq.com/album/one-piece-1999-1976z6p06p'}
-        ]
+
+        init() {
+            this.renderGenres();
+            this.renderGrid(this.db);
+        },
+
+        renderGenres() {
+            document.getElementById('genreList').innerHTML = this.genres.map(g => 
+                `<button class="genre-btn ${g==='All'?'active':''}" onclick="app.filter('${g}', this)">${g}</button>`
+            ).join('');
+        },
+
+        renderGrid(data) {
+            document.getElementById('animeGrid').innerHTML = data.map(item => `
+                <div class="anime-card" onclick="app.open('${item.title}')">
+                    <img src="${item.img}" class="poster">
+                    <div class="info"><h3>${item.title}</h3><p>⭐ ${item.rating}</p></div>
+                </div>
+            `).join('');
+        },
+
+        open(title) {
+            const anime = this.db.find(a => a.title === title);
+            document.getElementById('mTitle').innerText = anime.title;
+            document.getElementById('mDesc').innerText = anime.desc;
+            
+            this.renderEpisodeList(anime);
+            this.selectEpisode(anime.episodes[0], 0); // Start with Ep 1
+            
+            document.getElementById('videoModal').classList.add('active');
+            document.getElementById('closeBtn').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        },
+
+        renderEpisodeList(anime) {
+            const grid = document.getElementById('episodeGrid');
+            grid.innerHTML = anime.episodes.map((ep, idx) => `
+                <button class="ep-btn" id="ep-btn-${idx}" onclick="app.selectEpisode(${JSON.stringify(ep).replace(/"/g, '&quot;')}, ${idx})">
+                    ${ep.num}
+                </button>
+            `).join('');
+        },
+
+        selectEpisode(ep, idx) {
+            // Highlight active button
+            document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
+            const activeBtn = document.getElementById(`ep-btn-${idx}`);
+            if(activeBtn) activeBtn.classList.add('active');
+
+            // Render source buttons for THIS episode
+            const sourceContainer = document.getElementById('sourceSelector');
+            sourceContainer.innerHTML = ep.sources.map(s => `
+                <button class="source-btn ${s.type}" onclick="app.loadPlayer(${JSON.stringify(s).replace(/"/g, '&quot;')})">
+                    ${s.type === 'yt' ? '▶ YouTube' : '🌐 ' + s.label}
+                </button>
+            `).join('');
+
+            // Load first source by default
+            this.loadPlayer(ep.sources[0]);
+        },
+
+        loadPlayer(source) {
+            const area = document.getElementById('playerArea');
+            if (source.type === 'yt') {
+                area.innerHTML = `<iframe src="https://www.youtube.com/embed/${source.id}?autoplay=1" allowfullscreen allow="autoplay"></iframe>`;
+            } else {
+                area.innerHTML = `<div style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#222; text-align:center; padding:20px;">
+                    <p>Episode ini tersedia di platform eksternal resmi.</p>
+                    <a href="${source.url}" target="_blank" class="source-btn bst" style="margin-top:15px; text-decoration:none;">Tonton di ${source.label}</a>
+                </div>`;
+            }
+        },
+
+        close() {
+            document.getElementById('videoModal').classList.remove('active');
+            document.getElementById('closeBtn').style.display = 'none';
+            document.getElementById('playerArea').innerHTML = '';
+            document.body.style.overflow = 'auto';
+        },
+
+        search() {
+            const q = document.getElementById('searchBox').value.toLowerCase();
+            this.renderGrid(this.db.filter(a => a.title.toLowerCase().includes(q)));
+        },
+
+        filter(g, btn) {
+            document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            this.renderGrid(g === 'All' ? this.db : this.db.filter(a => a.genre === g));
+        }
     };
 
-    let currentGenre = 'all';
-
-    function renderGrids() {
-        for (const season in animeDatabase) {
-            const grid = document.getElementById(`grid-${season}`);
-            if (!grid) continue;
-            
-            grid.innerHTML = animeDatabase[season]
-                .filter(anime => currentGenre === 'all' || anime.genre === currentGenre)
-                .map(anime => `
-                    <div class="anime-card" onclick="openVideo('${season}', '${anime.title}')">
-                        <img src="${anime.img}" class="anime-poster">
-                        <div class="anime-info">
-                            <div class="anime-title">${anime.title}</div>
-                            <div style="font-size: 0.8rem; color: #aaa;">⭐ ${anime.rating} | ${anime.eps} Eps</div>
-                        </div>
-                    </div>
-                `).join('');
-        }
-    }
-
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        event.currentTarget.classList.add('active');
-    }
-
-    function filterByGenre(genre) {
-        currentGenre = genre;
-        document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-        renderGrids();
-    }
-
-    function openVideo(season, title) {
-        const anime = animeDatabase[season].find(a => a.title === title);
-        const modal = document.getElementById('videoModal');
-        const playerArea = document.getElementById('playerArea');
-        
-        document.getElementById('modalTitle').innerText = anime.title;
-        document.getElementById('modalMeta').innerText = `${anime.genre.toUpperCase()} • Rating: ${anime.rating}`;
-
-        if (anime.type === 'youtube') {
-            playerArea.innerHTML = `
-                <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/${anime.videoId}" allowfullscreen></iframe>
-                </div>`;
-        } else {
-            playerArea.innerHTML = `
-                <div class="video-container" style="display:flex; align-items:center; justify-content:center; background:#222;">
-                    <div style="text-align:center">
-                        <p>Streaming tersedia di platform eksternal</p>
-                        <a href="${anime.url}" target="_blank" class="external-btn">Tonton di Bstation / iQIYI</a>
-                    </div>
-                </div>`;
-        }
-        
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Stop scroll
-    }
-
-    function closeVideo() {
-        const modal = document.getElementById('videoModal');
-        document.getElementById('playerArea').innerHTML = '';
-        modal.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-
-    function handleSearch() {
-        const query = document.getElementById('searchBox').value.toLowerCase();
-        document.querySelectorAll('.anime-card').forEach(card => {
-            const title = card.querySelector('.anime-title').innerText.toLowerCase();
-            card.style.display = title.includes(query) ? 'block' : 'none';
-        });
-    }
-
-    // Initial load
-    renderGrids();
+    app.init();
 </script>
 </body>
 </html>
