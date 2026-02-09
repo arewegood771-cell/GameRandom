@@ -3,650 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Waifu Database - Ultimate Anime Character Collection</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&family=Archivo+Black&family=M+PLUS+Rounded+1c:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Waifu Database - 320+ Characters</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary: #8b5cf6;
-            --accent: #ec4899;
-            --white: #ffffff;
-            --light-bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-dark: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-            --shadow: rgba(0, 0, 0, 0.1);
-        }
-
-        body {
-            font-family: 'M PLUS Rounded 1c', 'Quicksand', sans-serif;
-            background: var(--light-bg);
-            color: var(--text-dark);
-            min-height: 100vh;
-        }
-
-        header {
-            text-align: center;
-            padding: 3rem 2rem 2rem;
-            background: white;
-            border-bottom: 1px solid var(--border);
-            position: relative;
-        }
-
-        .settings-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.8rem 1.2rem;
-            background: var(--light-bg);
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            font-size: 1.5rem;
-        }
-
-        .settings-btn:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        h1 {
-            font-family: 'Pacifico', cursive;
-            font-size: 3.5rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .tagline {
-            font-family: 'Quicksand', sans-serif;
-            font-size: 1.2rem;
-            color: var(--text-light);
-            font-weight: 600;
-            letter-spacing: 2px;
-        }
-
-        .nav-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            padding: 1.5rem 2rem;
-            background: white;
-            border-bottom: 2px solid var(--border);
-            flex-wrap: wrap;
-        }
-
-        .nav-tab {
-            padding: 0.8rem 2rem;
-            border: 2px solid var(--border);
-            background: var(--white);
-            color: var(--text-dark);
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            font-size: 1rem;
-        }
-
-        .nav-tab:hover {
-            background: var(--light-bg);
-            border-color: var(--primary-light);
-        }
-
-        .nav-tab.active {
-            background: var(--primary);
-            color: var(--white);
-            border-color: var(--primary);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            padding: 2rem;
-            flex-wrap: wrap;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 100;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .search-box {
-            display: flex;
-            gap: 1rem;
-            max-width: 600px;
-            width: 100%;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: 'Quicksand', sans-serif;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .filter-btn {
-            padding: 0.8rem 1.5rem;
-            border: 2px solid var(--border);
-            background: var(--white);
-            color: var(--text-dark);
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-        }
-
-        .filter-btn:hover {
-            background: var(--light-bg);
-            border-color: var(--primary-light);
-        }
-
-        .filter-btn.active {
-            background: var(--primary);
-            color: var(--white);
-            border-color: var(--primary);
-        }
-
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .waifu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .waifu-card {
-            background: var(--white);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px var(--shadow);
-            transition: all 0.3s ease;
-            border: 1px solid var(--border);
-            cursor: pointer;
-        }
-
-        .waifu-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px var(--shadow);
-            border-color: var(--primary);
-        }
-
-        .waifu-image {
-            width: 100%;
-            height: 320px;
-            position: relative;
-            overflow: hidden;
-            background: var(--light-bg);
-        }
-
-        .waifu-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .waifu-image::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 50%;
-            background: linear-gradient(to top, rgba(0,0,0,0.3), transparent);
-        }
-
-        .waifu-info {
-            padding: 1.5rem;
-        }
-
-        .waifu-name {
-            font-family: 'Archivo Black', sans-serif;
-            font-size: 1.3rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .waifu-anime {
-            font-size: 0.95rem;
-            color: var(--text-light);
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .mal-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.6rem 1rem;
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            margin-top: 0.8rem;
-        }
-
-        .mal-link:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .waifu-details {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-            font-size: 0.85rem;
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.4rem;
-            background: var(--light-bg);
-            border-radius: 6px;
-        }
-
-        .detail-label {
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .detail-value {
-            color: var(--text-light);
-        }
-
-        /* Random Waifu Section */
-        .random-container {
-            max-width: 800px;
-            margin: 3rem auto;
-            text-align: center;
-        }
-
-        .random-btn {
-            padding: 1.5rem 3rem;
-            font-size: 1.3rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-        }
-
-        .random-btn:hover {
-            background: var(--primary-dark);
-            transform: scale(1.05);
-        }
-
-        .random-result {
-            margin-top: 3rem;
-        }
-
-        /* Recognizer Section */
-        .recognizer-container {
-            max-width: 800px;
-            margin: 3rem auto;
-        }
-
-        .upload-area {
-            border: 3px dashed var(--border);
-            border-radius: 12px;
-            padding: 3rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .upload-area:hover {
-            border-color: var(--primary);
-            background: var(--light-bg);
-        }
-
-        .upload-area.dragover {
-            border-color: var(--primary);
-            background: var(--light-bg);
-        }
-
-        #fileInput {
-            display: none;
-        }
-
-        .upload-icon {
-            font-size: 4rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .preview-container {
-            margin-top: 2rem;
-            display: none;
-        }
-
-        .preview-image {
-            max-width: 100%;
-            max-height: 400px;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-        }
-
-        .recognition-results {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 2rem;
-            border: 1px solid var(--border);
-        }
-
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            align-items: center;
-        }
-
-        .result-item:last-child {
-            border-bottom: none;
-        }
-
-        .confidence-bar {
-            height: 8px;
-            background: var(--light-bg);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 0.5rem;
-        }
-
-        .confidence-fill {
-            height: 100%;
-            background: var(--primary);
-            transition: width 0.5s ease;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            overflow-y: auto;
-            padding: 2rem;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 3rem;
-            max-width: 800px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            border: 1px solid var(--border);
-        }
-
-        .modal-content::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        .modal-content::-webkit-scrollbar-track {
-            background: var(--light-bg);
-            border-radius: 10px;
-        }
-
-        .modal-content::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 2rem;
-            cursor: pointer;
-            color: var(--text-light);
-            background: var(--light-bg);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            z-index: 10;
-            border: 1px solid var(--border);
-        }
-
-        .close-modal:hover {
-            background: var(--primary);
-            color: var(--white);
-            border-color: var(--primary);
-        }
-
-        .modal-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .modal-image {
-            width: 100%;
-            max-height: 400px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-        }
-
-        .modal-name {
-            font-family: 'Pacifico', cursive;
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-anime {
-            font-size: 1.2rem;
-            color: var(--text-light);
-            font-weight: 700;
-        }
-
-        .info-section {
-            background: var(--light-bg);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border);
-        }
-
-        .info-title {
-            color: var(--primary);
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            font-family: 'Archivo Black', sans-serif;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0.8rem;
-        }
-
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.6rem;
-            background: var(--white);
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 4rem 2rem;
-            font-size: 1.5rem;
-            color: var(--text-light);
-            grid-column: 1 / -1;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            font-size: 1.2rem;
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        /* Settings Modal */
-        .settings-modal {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-        }
-
-        .settings-header {
-            font-size: 1.8rem;
-            color: var(--primary);
-            margin-bottom: 2rem;
-            font-family: 'Archivo Black', sans-serif;
-        }
-
-        .settings-section {
-            margin-bottom: 2rem;
-        }
-
-        .settings-label {
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 0.8rem;
-            display: block;
-        }
-
-        .language-select {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: 'Quicksand', sans-serif;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .language-select:focus {
-            border-color: var(--primary);
-            outline: none;
-        }
-
-        .save-settings-btn {
-            width: 100%;
-            padding: 1rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .save-settings-btn:hover {
-            background: var(--primary-dark);
-        }
-
+            --primary: #6366f1; --primary-dark: #4f46e5; --white: #ffffff;
+            --light-bg: #f8fafc; --text-dark: #1e293b; --text-light: #64748b;
+            --border: #e2e8f0; --shadow: rgba(0, 0, 0, 0.1);
+        }
+        body { font-family: 'Quicksand', sans-serif; background: var(--light-bg); color: var(--text-dark); }
+        header { text-align: center; padding: 2rem; background: white; border-bottom: 1px solid var(--border); position: relative; }
+        .settings-btn { position: absolute; top: 1rem; right: 1rem; padding: 0.6rem 1rem; background: var(--light-bg); border: 2px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 1.2rem; }
+        .settings-btn:hover { background: var(--primary); color: white; }
+        h1 { font-family: 'Pacifico', cursive; font-size: 2.5rem; color: var(--primary); }
+        .tagline { color: var(--text-light); margin-top: 0.5rem; }
+        .nav-tabs { display: flex; justify-content: center; gap: 1rem; padding: 1rem; background: white; border-bottom: 2px solid var(--border); flex-wrap: wrap; }
+        .nav-tab { padding: 0.6rem 1.5rem; border: 2px solid var(--border); background: var(--white); color: var(--text-dark); border-radius: 8px; cursor: pointer; font-weight: 700; }
+        .nav-tab:hover { background: var(--light-bg); }
+        .nav-tab.active { background: var(--primary); color: var(--white); border-color: var(--primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .controls { display: flex; justify-content: center; gap: 1rem; padding: 1.5rem; background: white; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+        .search-input { padding: 0.8rem 1.2rem; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem; width: 300px; }
+        .search-input:focus { border-color: var(--primary); outline: none; }
+        .filter-btn { padding: 0.6rem 1.2rem; border: 2px solid var(--border); background: var(--white); border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .filter-btn.active { background: var(--primary); color: var(--white); }
+        .container { max-width: 1600px; margin: 0 auto; padding: 2rem; }
+        .waifu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
+        .waifu-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px var(--shadow); border: 1px solid var(--border); cursor: pointer; transition: transform 0.3s; }
+        .waifu-card:hover { transform: translateY(-4px); border-color: var(--primary); }
+        .waifu-image { width: 100%; height: 280px; background: var(--light-bg); position: relative; }
+        .waifu-image img { width: 100%; height: 100%; object-fit: cover; }
+        .waifu-info { padding: 1rem; }
+        .waifu-name { font-size: 1.2rem; color: var(--primary); font-weight: 700; margin-bottom: 0.3rem; }
+        .waifu-anime { font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem; }
+        .detail-row { display: flex; justify-content: space-between; padding: 0.3rem; background: var(--light-bg); border-radius: 4px; margin-bottom: 0.3rem; font-size: 0.8rem; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; padding: 2rem; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 16px; padding: 2rem; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; }
+        .close-modal { position: absolute; top: 1rem; right: 1rem; font-size: 2rem; cursor: pointer; background: var(--light-bg); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .close-modal:hover { background: var(--primary); color: white; }
+        .modal-image { width: 100%; max-height: 350px; object-fit: cover; border-radius: 12px; margin-bottom: 1.5rem; }
+        .modal-name { font-size: 2rem; color: var(--primary); font-family: 'Pacifico', cursive; margin-bottom: 0.5rem; text-align: center; }
+        .modal-anime { font-size: 1.1rem; color: var(--text-light); text-align: center; margin-bottom: 1.5rem; }
+        .info-section { background: var(--light-bg); padding: 1rem; border-radius: 12px; margin-bottom: 1rem; }
+        .info-title { color: var(--primary); font-size: 1.1rem; margin-bottom: 0.8rem; font-weight: 700; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; }
+        .info-item { display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px; font-size: 0.85rem; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+        .gallery-item { position: relative; padding-bottom: 100%; overflow: hidden; border-radius: 8px; cursor: pointer; }
+        .gallery-item:hover { transform: scale(1.05); }
+        .gallery-item img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .settings-modal { background: white; border-radius: 16px; padding: 2rem; max-width: 400px; width: 90%; }
+        .language-select { width: 100%; padding: 0.8rem; border: 2px solid var(--border); border-radius: 8px; margin-top: 0.5rem; }
+        .save-btn { width: 100%; padding: 0.8rem; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 1rem; }
+        .save-btn:hover { background: var(--primary-dark); }
+        .random-container { max-width: 700px; margin: 3rem auto; text-align: center; }
+        .random-btn { padding: 1.2rem 2.5rem; font-size: 1.2rem; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 700; }
+        .random-btn:hover { background: var(--primary-dark); }
+        .upload-area { border: 3px dashed var(--border); border-radius: 12px; padding: 2.5rem; text-align: center; cursor: pointer; background: white; margin: 2rem auto; max-width: 600px; }
+        .upload-area:hover { border-color: var(--primary); }
+        .preview-image { max-width: 100%; max-height: 350px; border-radius: 12px; margin: 1rem 0; display: none; }
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-
-            .waifu-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .controls {
-                flex-direction: column;
-            }
-
-            .modal-content {
-                padding: 2rem;
-            }
-
-            .nav-tabs {
-                gap: 0.5rem;
-            }
-
-            .nav-tab {
-                padding: 0.6rem 1rem;
-                font-size: 0.9rem;
-            }
-
-            .settings-btn {
-                top: 0.5rem;
-                right: 0.5rem;
-                padding: 0.5rem 0.8rem;
-            }
+            h1 { font-size: 2rem; }
+            .waifu-grid { grid-template-columns: 1fr; }
+            .search-input { width: 100%; }
         }
     </style>
 </head>
@@ -654,643 +76,437 @@
     <header>
         <button class="settings-btn" onclick="openSettings()">⚙️</button>
         <h1 id="headerTitle">Waifu Database</h1>
-        <p class="tagline" id="headerTagline">ULTIMATE ANIME CHARACTER COLLECTION</p>
+        <p class="tagline" id="headerTagline">320+ KARAKTER ANIME</p>
     </header>
 
     <div class="nav-tabs">
-        <button class="nav-tab active" onclick="switchTab('browse')" id="tabBrowse">Browse All</button>
-        <button class="nav-tab" onclick="switchTab('random')" id="tabRandom">Random Character</button>
-        <button class="nav-tab" onclick="switchTab('recognizer')" id="tabRecognizer">Character Recognizer</button>
+        <button class="nav-tab active" onclick="switchTab('browse')" id="tabBrowse">Jelajahi Semua</button>
+        <button class="nav-tab" onclick="switchTab('random')" id="tabRandom">Karakter Acak</button>
+        <button class="nav-tab" onclick="switchTab('recognizer')" id="tabRecognizer">Pengenal Karakter</button>
     </div>
 
-    <!-- Browse Tab -->
     <div id="browseTab" class="tab-content active">
         <div class="controls">
-            <div class="search-box">
-                <input type="text" class="search-input" id="searchInput" placeholder="Search by character name or anime...">
-            </div>
-            <div class="filter-group">
-                <button class="filter-btn active" data-filter="all" id="filterAll">All</button>
-                <button class="filter-btn" data-filter="action" id="filterAction">Action</button>
-                <button class="filter-btn" data-filter="romance" id="filterRomance">Romance</button>
-                <button class="filter-btn" data-filter="fantasy" id="filterFantasy">Fantasy</button>
-            </div>
+            <input type="text" class="search-input" id="searchInput" placeholder="Cari nama karakter atau anime...">
+            <button class="filter-btn active" data-filter="all">Semua</button>
+            <button class="filter-btn" data-filter="action">Aksi</button>
+            <button class="filter-btn" data-filter="romance">Romantis</button>
+            <button class="filter-btn" data-filter="fantasy">Fantasi</button>
+            <button class="filter-btn" data-filter="comedy">Komedi</button>
         </div>
-
         <div class="container">
-            <div class="waifu-grid" id="waifuGrid">
-                <div class="loading" id="loadingText">Loading characters...</div>
-            </div>
+            <div class="waifu-grid" id="waifuGrid"></div>
         </div>
     </div>
 
-    <!-- Random Tab -->
     <div id="randomTab" class="tab-content">
-        <div class="container">
-            <div class="random-container">
-                <h2 style="font-size: 2rem; margin-bottom: 2rem; color: var(--primary);" id="randomTitle">Discover Your Random Character!</h2>
-                <button class="random-btn" onclick="generateRandom()" id="randomButton">Generate Random Character</button>
-                <div class="random-result" id="randomResult"></div>
-            </div>
+        <div class="random-container">
+            <h2 style="font-size: 2rem; margin-bottom: 2rem; color: var(--primary);" id="randomTitle">Temukan Karakter Acak!</h2>
+            <button class="random-btn" onclick="generateRandom()">Buat Karakter Acak</button>
+            <div id="randomResult" style="margin-top: 2rem;"></div>
         </div>
     </div>
 
-    <!-- Recognizer Tab -->
     <div id="recognizerTab" class="tab-content">
         <div class="container">
-            <div class="recognizer-container">
-                <h2 style="font-size: 2rem; margin-bottom: 2rem; text-align: center; color: var(--primary);" id="recognizerTitle">Character Recognizer</h2>
-                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-                    <div class="upload-icon">📤</div>
-                    <h3 id="uploadTitle">Upload Character Image</h3>
-                    <p style="color: var(--text-light); margin-top: 1rem;" id="uploadDesc">Click to upload or drag and drop</p>
-                    <input type="file" id="fileInput" accept="image/*" onchange="handleImageUpload(event)">
-                </div>
-                <div class="preview-container" id="previewContainer">
-                    <img id="previewImage" class="preview-image">
-                    <button class="random-btn" onclick="recognizeCharacter()" style="font-size: 1rem; padding: 1rem 2rem;" id="recognizeButton">Recognize Character</button>
-                </div>
-                <div id="recognitionResults"></div>
+            <h2 style="text-align: center; color: var(--primary); margin-bottom: 2rem;">Pengenal Karakter</h2>
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">📤</div>
+                <h3>Unggah Gambar Karakter</h3>
+                <p style="color: var(--text-light); margin-top: 0.5rem;">Klik atau seret gambar ke sini</p>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
             </div>
+            <img id="previewImage" class="preview-image">
+            <div style="text-align: center;">
+                <button class="random-btn" onclick="recognizeCharacter()" style="display: none; font-size: 1rem; padding: 1rem 2rem;" id="recognizeBtn">Kenali Karakter</button>
+            </div>
+            <div id="recognitionResults"></div>
         </div>
     </div>
 
-    <!-- Settings Modal -->
     <div class="modal" id="settingsModal">
         <div class="settings-modal">
-            <h2 class="settings-header" id="settingsHeader">Settings</h2>
-            
-            <div class="settings-section">
-                <label class="settings-label" id="languageLabel">Language / Bahasa</label>
-                <select class="language-select" id="languageSelect" onchange="changeLanguage()">
-                    <option value="en">English</option>
-                    <option value="id">Bahasa Indonesia</option>
-                    <option value="jp">日本語 (Japanese)</option>
-                </select>
-            </div>
-
-            <button class="save-settings-btn" onclick="closeSettings()" id="closeSettingsBtn">Close</button>
+            <h2 style="color: var(--primary); margin-bottom: 1.5rem;">Pengaturan</h2>
+            <label style="font-weight: 700; color: var(--text-dark);">Bahasa / Language</label>
+            <select class="language-select" id="languageSelect" onchange="changeLanguage()">
+                <option value="id">Bahasa Indonesia</option>
+                <option value="en">English</option>
+                <option value="jp">日本語</option>
+            </select>
+            <button class="save-btn" onclick="closeSettings()">Tutup</button>
         </div>
     </div>
 
-    <!-- Character Modal -->
     <div class="modal" id="waifuModal">
-        <div class="modal-content" id="modalContent">
+        <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">×</span>
             <div id="modalDetails"></div>
         </div>
     </div>
 
     <script>
-        // Translations
-        const translations = {
-            en: {
-                headerTitle: "Waifu Database",
-                headerTagline: "ULTIMATE ANIME CHARACTER COLLECTION",
-                tabBrowse: "Browse All",
-                tabRandom: "Random Character",
-                tabRecognizer: "Character Recognizer",
-                searchPlaceholder: "Search by character name or anime...",
-                filterAll: "All",
-                filterAction: "Action",
-                filterRomance: "Romance",
-                filterFantasy: "Fantasy",
-                loadingText: "Loading characters...",
-                randomTitle: "Discover Your Random Character!",
-                randomButton: "Generate Random Character",
-                recognizerTitle: "Character Recognizer",
-                uploadTitle: "Upload Character Image",
-                uploadDesc: "Click to upload or drag and drop",
-                recognizeButton: "Recognize Character",
-                settingsHeader: "Settings",
-                languageLabel: "Language",
-                closeSettingsBtn: "Close",
-                hair: "Hair",
-                eyes: "Eyes",
-                age: "Age",
-                height: "Height",
-                role: "Role",
-                malLink: "View on MyAnimeList",
-                basicInfo: "Basic Information",
-                genres: "Genres",
-                about: "About",
-                noResults: "No characters found. Try a different search!",
-                recognitionResults: "Recognition Results",
-                confidence: "Confidence",
-                recognitionNote: "Note: This is a simulated recognition. Click on any result to see full character details."
-            },
-            id: {
-                headerTitle: "Database Waifu",
-                headerTagline: "KOLEKSI KARAKTER ANIME TERLENGKAP",
-                tabBrowse: "Jelajahi Semua",
-                tabRandom: "Karakter Acak",
-                tabRecognizer: "Pengenal Karakter",
-                searchPlaceholder: "Cari berdasarkan nama karakter atau anime...",
-                filterAll: "Semua",
-                filterAction: "Aksi",
-                filterRomance: "Romantis",
-                filterFantasy: "Fantasi",
-                loadingText: "Memuat karakter...",
-                randomTitle: "Temukan Karakter Acakmu!",
-                randomButton: "Buat Karakter Acak",
-                recognizerTitle: "Pengenal Karakter",
-                uploadTitle: "Unggah Gambar Karakter",
-                uploadDesc: "Klik untuk mengunggah atau seret dan lepas",
-                recognizeButton: "Kenali Karakter",
-                settingsHeader: "Pengaturan",
-                languageLabel: "Bahasa",
-                closeSettingsBtn: "Tutup",
-                hair: "Rambut",
-                eyes: "Mata",
-                age: "Umur",
-                height: "Tinggi",
-                role: "Peran",
-                malLink: "Lihat di MyAnimeList",
-                basicInfo: "Informasi Dasar",
-                genres: "Genre",
-                about: "Tentang",
-                noResults: "Karakter tidak ditemukan. Coba pencarian lain!",
-                recognitionResults: "Hasil Pengenalan",
-                confidence: "Kepercayaan",
-                recognitionNote: "Catatan: Ini adalah pengenalan simulasi. Klik hasil mana pun untuk melihat detail karakter lengkap."
-            },
-            jp: {
-                headerTitle: "ワイフデータベース",
-                headerTagline: "究極のアニメキャラクターコレクション",
-                tabBrowse: "すべて閲覧",
-                tabRandom: "ランダムキャラ",
-                tabRecognizer: "キャラ認識",
-                searchPlaceholder: "キャラ名またはアニメで検索...",
-                filterAll: "すべて",
-                filterAction: "アクション",
-                filterRomance: "ロマンス",
-                filterFantasy: "ファンタジー",
-                loadingText: "読み込み中...",
-                randomTitle: "ランダムキャラクターを発見！",
-                randomButton: "ランダム生成",
-                recognizerTitle: "キャラクター認識",
-                uploadTitle: "キャラ画像をアップロード",
-                uploadDesc: "クリックまたはドラッグ＆ドロップ",
-                recognizeButton: "キャラを認識",
-                settingsHeader: "設定",
-                languageLabel: "言語",
-                closeSettingsBtn: "閉じる",
-                hair: "髪",
-                eyes: "目",
-                age: "年齢",
-                height: "身長",
-                role: "役割",
-                malLink: "MyAnimeListで見る",
-                basicInfo: "基本情報",
-                genres: "ジャンル",
-                about: "について",
-                noResults: "キャラクターが見つかりません。別の検索を試してください！",
-                recognitionResults: "認識結果",
-                confidence: "信頼度",
-                recognitionNote: "注：これはシミュレーションです。結果をクリックして詳細を表示します。"
-            }
-        };
+const translations = {
+    id: {
+        headerTitle: "Database Waifu",
+        headerTagline: "320+ KARAKTER ANIME",
+        tabBrowse: "Jelajahi Semua",
+        tabRandom: "Karakter Acak",
+        tabRecognizer: "Pengenal Karakter",
+        hair: "Rambut", eyes: "Mata", age: "Umur", height: "Tinggi", role: "Peran",
+        basicInfo: "Informasi Dasar", genres: "Genre", gallery: "Galeri", about: "Tentang"
+    },
+    en: {
+        headerTitle: "Waifu Database",
+        headerTagline: "320+ ANIME CHARACTERS",
+        tabBrowse: "Browse All",
+        tabRandom: "Random Character",
+        tabRecognizer: "Character Recognizer",
+        hair: "Hair", eyes: "Eyes", age: "Age", height: "Height", role: "Role",
+        basicInfo: "Basic Information", genres: "Genres", gallery: "Gallery", about: "About"
+    },
+    jp: {
+        headerTitle: "ワイフデータベース",
+        headerTagline: "320+ キャラクター",
+        tabBrowse: "すべて閲覧",
+        tabRandom: "ランダム",
+        tabRecognizer: "認識",
+        hair: "髪", eyes: "目", age: "年齢", height: "身長", role: "役割",
+        basicInfo: "基本情報", genres: "ジャンル", gallery: "ギャラリー", about: "について"
+    }
+};
 
-        // Database (Female only)
-        let allCharacters = [];
-        let filteredCharacters = [];
-        let currentFilter = 'all';
-        let uploadedImage = null;
-        let currentLanguage = 'id';
+let currentLanguage = 'id';
+let allCharacters = [];
+let filteredCharacters = [];
+let currentFilter = 'all';
 
-        function initializeDatabase() {
-            const characters = [
-                {name: "Zero Two", anime: "Darling in the FranXX", malId: 33278, genre: ["action", "romance"], hair: "Pink", eyes: "Cyan", age: "Unknown", height: "170 cm", role: "Protagonist", image: "https://cdn.myanimelist.net/images/characters/13/362441.jpg"},
-                {name: "Rem", anime: "Re:Zero", malId: 31240, genre: ["fantasy", "action"], hair: "Blue", eyes: "Blue", age: "18", height: "154 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/9/304495.jpg"},
-                {name: "Ram", anime: "Re:Zero", malId: 31240, genre: ["fantasy", "action"], hair: "Pink", eyes: "Red", age: "18", height: "154 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/6/304496.jpg"},
-                {name: "Emilia", anime: "Re:Zero", malId: 31240, genre: ["fantasy", "romance"], hair: "Silver", eyes: "Purple", age: "Unknown", height: "164 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/11/361977.jpg"},
-                {name: "Yor Forger", anime: "Spy x Family", malId: 50265, genre: ["action", "comedy"], hair: "Black", eyes: "Red", age: "27", height: "170 cm", role: "Protagonist", image: "https://cdn.myanimelist.net/images/characters/11/457609.jpg"},
-                {name: "Anya Forger", anime: "Spy x Family", malId: 50265, genre: ["comedy", "slice-of-life"], hair: "Pink", eyes: "Green", age: "6", height: "99.5 cm", role: "Protagonist", image: "https://cdn.myanimelist.net/images/characters/10/465952.jpg"},
-                {name: "Nezuko Kamado", anime: "Kimetsu no Yaiba", malId: 38000, genre: ["action", "fantasy"], hair: "Black & Orange", eyes: "Pink", age: "14", height: "153 cm", role: "Deuteragonist", image: "https://cdn.myanimelist.net/images/characters/3/394913.jpg"},
-                {name: "Shinobu Kocho", anime: "Kimetsu no Yaiba", malId: 38000, genre: ["action", "fantasy"], hair: "Black to Purple", eyes: "Purple", age: "18", height: "151 cm", role: "Hashira", image: "https://cdn.myanimelist.net/images/characters/11/375465.jpg"},
-                {name: "Mitsuri Kanroji", anime: "Kimetsu no Yaiba", malId: 38000, genre: ["action", "romance"], hair: "Pink & Green", eyes: "Green", age: "19", height: "167 cm", role: "Hashira", image: "https://cdn.myanimelist.net/images/characters/14/407467.jpg"},
-                {name: "Marin Kitagawa", anime: "Sono Bisque Doll wa Koi wo Suru", malId: 48736, genre: ["romance", "slice-of-life"], hair: "Blonde", eyes: "Pink", age: "15", height: "164 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/4/457352.jpg"},
-                {name: "Mikasa Ackerman", anime: "Shingeki no Kyojin", malId: 16498, genre: ["action", "fantasy"], hair: "Black", eyes: "Gray", age: "19", height: "170 cm", role: "Deuteragonist", image: "https://cdn.myanimelist.net/images/characters/9/215563.jpg"},
-                {name: "Annie Leonhart", anime: "Shingeki no Kyojin", malId: 16498, genre: ["action", "fantasy"], hair: "Blonde", eyes: "Blue", age: "20", height: "153 cm", role: "Antagonist", image: "https://cdn.myanimelist.net/images/characters/9/217391.jpg"},
-                {name: "Historia Reiss", anime: "Shingeki no Kyojin", malId: 16498, genre: ["action", "fantasy"], hair: "Blonde", eyes: "Blue", age: "19", height: "145 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/5/373803.jpg"},
-                {name: "Hinata Hyuga", anime: "Naruto Shippuden", malId: 1735, genre: ["action", "romance"], hair: "Dark Blue", eyes: "Lavender", age: "32", height: "163 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/4/305047.jpg"},
-                {name: "Sakura Haruno", anime: "Naruto Shippuden", malId: 1735, genre: ["action", "romance"], hair: "Pink", eyes: "Green", age: "33", height: "165 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/9/69275.jpg"},
-                {name: "Asuna Yuuki", anime: "Sword Art Online", malId: 11757, genre: ["action", "romance"], hair: "Brown", eyes: "Hazel", age: "17", height: "168 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/15/262053.jpg"},
-                {name: "Sinon", anime: "Sword Art Online II", malId: 21881, genre: ["action", "fantasy"], hair: "Blue", eyes: "Blue", age: "16", height: "162 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/11/236385.jpg"},
-                {name: "Mai Sakurajima", anime: "Seishun Buta Yarou", malId: 37450, genre: ["romance", "fantasy"], hair: "Black", eyes: "Purple", age: "17", height: "165 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/3/371828.jpg"},
-                {name: "Rias Gremory", anime: "High School DxD", malId: 11617, genre: ["action", "romance"], hair: "Crimson Red", eyes: "Blue-Green", age: "18", height: "172 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/13/237867.jpg"},
-                {name: "Violet Evergarden", anime: "Violet Evergarden", malId: 33352, genre: ["fantasy", "slice-of-life"], hair: "Blonde", eyes: "Blue", age: "14", height: "161 cm", role: "Protagonist", image: "https://cdn.myanimelist.net/images/characters/5/356794.jpg"},
-                {name: "Saber", anime: "Fate/stay night", malId: 356, genre: ["action", "fantasy"], hair: "Blonde", eyes: "Green", age: "Unknown", height: "154 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/6/275600.jpg"},
-                {name: "Rin Tohsaka", anime: "Fate/stay night", malId: 356, genre: ["action", "fantasy"], hair: "Black", eyes: "Blue", age: "17", height: "159 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/13/289461.jpg"},
-                {name: "Hitagi Senjougahara", anime: "Bakemonogatari", malId: 5081, genre: ["romance", "fantasy"], hair: "Purple", eyes: "Purple", age: "18", height: "165 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/7/100891.jpg"},
-                {name: "Nami", anime: "One Piece", malId: 21, genre: ["action", "adventure"], hair: "Orange", eyes: "Brown", age: "20", height: "170 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/5/310950.jpg"},
-                {name: "Nico Robin", anime: "One Piece", malId: 21, genre: ["action", "adventure"], hair: "Black", eyes: "Blue", age: "30", height: "188 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/10/96665.jpg"},
-                {name: "Rukia Kuchiki", anime: "Bleach", malId: 269, genre: ["action", "fantasy"], hair: "Black", eyes: "Purple", age: "150+", height: "144 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/2/284891.jpg"},
-                {name: "Orihime Inoue", anime: "Bleach", malId: 269, genre: ["action", "romance"], hair: "Orange", eyes: "Gray", age: "17", height: "157 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/4/284893.jpg"},
-                {name: "Ochaco Uraraka", anime: "Boku no Hero Academia", malId: 31964, genre: ["action", "romance"], hair: "Brown", eyes: "Brown", age: "16", height: "156 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/14/315173.jpg"},
-                {name: "Momo Yaoyorozu", anime: "Boku no Hero Academia", malId: 31964, genre: ["action", "slice-of-life"], hair: "Black", eyes: "Black", age: "16", height: "173 cm", role: "Supporting", image: "https://cdn.myanimelist.net/images/characters/9/315174.jpg"},
-                {name: "Kurisu Makise", anime: "Steins;Gate", malId: 9253, genre: ["fantasy", "romance"], hair: "Red", eyes: "Purple", age: "18", height: "160 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/11/236381.jpg"},
-                {name: "Aqua", anime: "Kono Subarashii Sekai", malId: 30831, genre: ["comedy", "fantasy"], hair: "Blue", eyes: "Blue", age: "Unknown", height: "157 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/3/356687.jpg"},
-                {name: "Megumin", anime: "Kono Subarashii Sekai", malId: 30831, genre: ["comedy", "fantasy"], hair: "Brown", eyes: "Red", age: "14", height: "Unknown", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/16/289677.jpg"},
-                {name: "Makima", anime: "Chainsaw Man", malId: 44511, genre: ["action", "fantasy"], hair: "Red", eyes: "Yellow", age: "Unknown", height: "Unknown", role: "Antagonist", image: "https://cdn.myanimelist.net/images/characters/5/494969.jpg"},
-                {name: "Power", anime: "Chainsaw Man", malId: 44511, genre: ["action", "comedy"], hair: "Blonde", eyes: "Red", age: "Unknown", height: "173 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/3/492980.jpg"},
-                {name: "Nobara Kugisaki", anime: "Jujutsu Kaisen", malId: 40748, genre: ["action", "fantasy"], hair: "Orange", eyes: "Orange", age: "16", height: "160 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/13/422188.jpg"},
-                {name: "Maki Zenin", anime: "Jujutsu Kaisen", malId: 40748, genre: ["action", "fantasy"], hair: "Green", eyes: "Yellow", age: "17", height: "170 cm", role: "Supporting", image: "https://cdn.myanimelist.net/images/characters/6/422198.jpg"},
-                {name: "C.C.", anime: "Code Geass", malId: 1575, genre: ["action", "fantasy"], hair: "Green", eyes: "Gold", age: "Unknown", height: "168 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/10/122764.jpg"},
-                {name: "Taiga Aisaka", anime: "Toradora!", malId: 4224, genre: ["romance", "comedy"], hair: "Brown", eyes: "Brown", age: "17", height: "143 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/14/482215.jpg"},
-                {name: "Kaguya Shinomiya", anime: "Kaguya-sama wa Kokurasetai", malId: 37999, genre: ["romance", "comedy"], hair: "Black", eyes: "Red", age: "17", height: "158 cm", role: "Protagonist", image: "https://cdn.myanimelist.net/images/characters/2/371542.jpg"},
-                {name: "Chika Fujiwara", anime: "Kaguya-sama wa Kokurasetai", malId: 37999, genre: ["comedy", "slice-of-life"], hair: "Pink", eyes: "Blue", age: "16", height: "154 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/12/422168.jpg"},
-                {name: "Frieren", anime: "Sousou no Frieren", malId: 52991, genre: ["fantasy", "adventure"], hair: "White", eyes: "Green", age: "1000+", height: "Unknown", role: "Protagonist", image: "https://cdn.myanimelist.net/images/characters/8/510214.jpg"},
-                {name: "Fern", anime: "Sousou no Frieren", malId: 52991, genre: ["fantasy", "adventure"], hair: "Purple", eyes: "Purple", age: "18", height: "Unknown", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/9/510215.jpg"},
-                {name: "Touka Kirishima", anime: "Tokyo Ghoul", malId: 22319, genre: ["action", "fantasy"], hair: "Purple", eyes: "Blue", age: "18", height: "156 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/9/262411.jpg"},
-                {name: "Lucy Heartfilia", anime: "Fairy Tail", malId: 6702, genre: ["action", "fantasy"], hair: "Blonde", eyes: "Brown", age: "19", height: "165 cm", role: "Protagonist", image: "https://cdn.myanimelist.net/images/characters/4/225188.jpg"},
-                {name: "Erza Scarlet", anime: "Fairy Tail", malId: 6702, genre: ["action", "fantasy"], hair: "Red", eyes: "Brown", age: "21", height: "165 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/10/186163.jpg"},
-                {name: "Bulma", anime: "Dragon Ball Z", malId: 813, genre: ["action", "adventure"], hair: "Blue", eyes: "Blue", age: "47", height: "165 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/10/327020.jpg"},
-                {name: "Android 18", anime: "Dragon Ball Z", malId: 813, genre: ["action", "fantasy"], hair: "Blonde", eyes: "Blue", age: "Unknown", height: "169 cm", role: "Supporting", image: "https://cdn.myanimelist.net/images/characters/7/327021.jpg"},
-                {name: "Winry Rockbell", anime: "Fullmetal Alchemist: Brotherhood", malId: 5114, genre: ["action", "slice-of-life"], hair: "Blonde", eyes: "Blue", age: "16", height: "163 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/11/54279.jpg"},
-                {name: "Misa Amane", anime: "Death Note", malId: 1535, genre: ["fantasy", "romance"], hair: "Blonde", eyes: "Brown", age: "19", height: "152 cm", role: "Main Character", image: "https://cdn.myanimelist.net/images/characters/10/75227.jpg"},
-                {name: "Rei Ayanami", anime: "Neon Genesis Evangelion", malId: 30, genre: ["action", "fantasy"], hair: "Blue", eyes: "Red", age: "14", height: "158 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/9/212471.jpg"},
-                {name: "Asuka Langley", anime: "Neon Genesis Evangelion", malId: 30, genre: ["action", "romance"], hair: "Red", eyes: "Blue", age: "14", height: "157 cm", role: "Main Heroine", image: "https://cdn.myanimelist.net/images/characters/9/301675.jpg"},
+function initializeDatabase() {
+    const animeData = [
+        {anime: "Re:Zero", malId: 31240, names: ["Rem", "Ram", "Emilia", "Beatrice", "Felt", "Crusch", "Priscilla", "Anastasia", "Echidna", "Minerva"], genre: ["fantasy", "action"]},
+        {anime: "Spy x Family", malId: 50265, names: ["Yor Forger", "Anya Forger", "Fiona Frost", "Becky Blackbell", "Sylvia Sherwood"], genre: ["action", "comedy"]},
+        {anime: "Kimetsu no Yaiba", malId: 38000, names: ["Nezuko", "Shinobu", "Mitsuri", "Kanao", "Kanae", "Aoi", "Makomo", "Tamayo", "Daki", "Nakime", "Susamaru", "Mother Spider"], genre: ["action", "fantasy"]},
+        {anime: "Attack on Titan", malId: 16498, names: ["Mikasa", "Annie", "Historia", "Sasha", "Pieck", "Ymir", "Hange", "Gabi", "Yelena", "Hitch"], genre: ["action", "fantasy"]},
+        {anime: "Naruto", malId: 1735, names: ["Hinata", "Sakura", "Tsunade", "Temari", "Ino", "Tenten", "Kushina", "Konan", "Kaguya", "Kurenai", "Anko", "Hanabi", "Mei"], genre: ["action"]},
+        {anime: "Sword Art Online", malId: 11757, names: ["Asuna", "Sinon", "Yui", "Silica", "Lisbeth", "Suguha", "Yuuki", "Alice", "Sortiliena", "Tiese"], genre: ["action", "fantasy"]},
+        {anime: "Seishun Buta Yarou", malId: 37450, names: ["Mai Sakurajima", "Tomoe Koga", "Rio Futaba", "Nodoka Toyohama", "Kaede Azusagawa"], genre: ["romance", "fantasy"]},
+        {anime: "High School DxD", malId: 11617, names: ["Rias Gremory", "Akeno", "Koneko", "Asia", "Xenovia", "Irina", "Rossweisse", "Ravel"], genre: ["action", "romance"]},
+        {anime: "Violet Evergarden", malId: 33352, names: ["Violet", "Cattleya", "Iris", "Luculia", "Charlotte"], genre: ["fantasy", "slice-of-life"]},
+        {anime: "Fate/stay night", malId: 356, names: ["Saber", "Rin Tohsaka", "Sakura", "Jeanne", "Mordred", "Astolfo", "Mash", "Scathach", "Ishtar", "Nero", "Tamamo", "Musashi", "BB", "Illya", "Ereshkigal"], genre: ["action", "fantasy"]},
+        {anime: "Bakemonogatari", malId: 5081, names: ["Hitagi", "Shinobu", "Nadeko", "Suruga", "Mayoi", "Tsubasa", "Karen", "Tsukihi", "Yotsugi", "Ougi"], genre: ["romance", "fantasy"]},
+        {anime: "One Piece", malId: 21, names: ["Nami", "Robin", "Hancock", "Vivi", "Perona", "Bonney", "Rebecca", "Carrot", "Yamato", "Ulti", "Tashigi", "Hiyori"], genre: ["action", "adventure"]},
+        {anime: "Bleach", malId: 269, names: ["Rukia", "Orihime", "Yoruichi", "Rangiku", "Nelliel", "Harribel", "Unohana", "Bambietta", "Candice", "Meninas"], genre: ["action", "fantasy"]},
+        {anime: "Boku no Hero Academia", malId: 31964, names: ["Ochaco", "Momo", "Kyoka", "Tsuyu", "Toga", "Mina", "Toru", "Mei", "Nejire", "Kendo", "Camie", "Mirko"], genre: ["action"]},
+        {anime: "Steins;Gate", malId: 9253, names: ["Kurisu Makise", "Mayuri", "Suzuha", "Faris", "Moeka"], genre: ["fantasy", "romance"]},
+        {anime: "KonoSuba", malId: 30831, names: ["Aqua", "Megumin", "Darkness", "Wiz", "Yunyun", "Chris", "Luna"], genre: ["comedy", "fantasy"]},
+        {anime: "Chainsaw Man", malId: 44511, names: ["Makima", "Power", "Himeno", "Kobeni", "Reze", "Quanxi", "Asa"], genre: ["action", "fantasy"]},
+        {anime: "Jujutsu Kaisen", malId: 40748, names: ["Nobara", "Maki", "Mei Mei", "Shoko", "Utahime", "Mai", "Miwa", "Momo", "Yuki", "Yorozu"], genre: ["action", "fantasy"]},
+        {anime: "Tokyo Ghoul", malId: 22319, names: ["Touka", "Rize", "Hinami", "Eto", "Akira", "Saiko"], genre: ["action", "fantasy"]},
+        {anime: "Code Geass", malId: 1575, names: ["C.C.", "Kallen", "Shirley", "Cornelia", "Euphemia", "Nina"], genre: ["action", "fantasy"]},
+        {anime: "Toradora", malId: 4224, names: ["Taiga", "Minori", "Ami", "Yasuko"], genre: ["romance", "comedy"]},
+        {anime: "Kaguya-sama", malId: 37999, names: ["Kaguya", "Chika", "Ai Hayasaka", "Miko Iino", "Kei"], genre: ["romance", "comedy"]},
+        {anime: "Frieren", malId: 52991, names: ["Frieren", "Fern", "Flamme", "Ubel", "Serie", "Aura"], genre: ["fantasy", "adventure"]},
+        {anime: "Dragon Ball Z", malId: 813, names: ["Bulma", "Android 18", "Chi-Chi", "Videl", "Launch"], genre: ["action", "adventure"]},
+        {anime: "Fairy Tail", malId: 6702, names: ["Lucy", "Erza", "Wendy", "Juvia", "Mirajane", "Levy", "Cana", "Ultear", "Minerva", "Kagura"], genre: ["action", "fantasy"]},
+        {anime: "One Punch Man", malId: 30276, names: ["Fubuki", "Tatsumaki", "Mosquito Girl"], genre: ["action", "comedy"]},
+        {anime: "Death Note", malId: 1535, names: ["Misa Amane", "Naomi Misora", "Takada"], genre: ["fantasy", "thriller"]},
+        {anime: "Evangelion", malId: 30, names: ["Rei Ayanami", "Asuka", "Misato", "Ritsuko", "Mari"], genre: ["action", "fantasy"]},
+        {anime: "Fullmetal Alchemist", malId: 5114, names: ["Winry", "Riza Hawkeye", "Olivier", "Izumi", "Lan Fan"], genre: ["action", "fantasy"]},
+        {anime: "5-toubun no Hanayome", malId: 38101, names: ["Miku", "Nino", "Itsuki", "Yotsuba", "Ichika"], genre: ["romance", "comedy"]},
+        {anime: "Horimiya", malId: 42897, names: ["Kyouko Hori", "Yuki", "Remi", "Sakura"], genre: ["romance", "slice-of-life"]},
+        {anime: "Nisekoi", malId: 18897, names: ["Chitoge", "Kosaki", "Marika", "Tsugumi"], genre: ["romance", "comedy"]},
+        {anime: "Shigatsu wa Kimi no Uso", malId: 23273, names: ["Kaori", "Tsubaki"], genre: ["romance", "music"]},
+        {anime: "Black Clover", malId: 34572, names: ["Noelle", "Mimosa", "Vanessa", "Charlotte", "Mereoleona", "Dorothy"], genre: ["action", "fantasy"]},
+        {anime: "Dr. Stone", malId: 38691, names: ["Kohaku", "Yuzuriha", "Nikki", "Suika"], genre: ["action", "adventure"]},
+        {anime: "Tensei Slime", malId: 37430, names: ["Shizu", "Shion", "Milim", "Shuna", "Treyni"], genre: ["fantasy", "action"]},
+        {anime: "Mushoku Tensei", malId: 39535, names: ["Roxy", "Eris", "Sylphiette", "Elinalise", "Ghislaine"], genre: ["fantasy", "adventure"]},
+        {anime: "Love Live", malId: 15051, names: ["Honoka", "Kotori", "Umi", "Maki", "Rin", "Hanayo", "Nico", "Eli", "Nozomi"], genre: ["slice-of-life", "music"]},
+        {anime: "Date A Live", malId: 15583, names: ["Tohka", "Kurumi", "Kotori", "Yoshino", "Origami", "Miku"], genre: ["action", "romance"]},
+        {anime: "Rent-a-Girlfriend", malId: 40839, names: ["Chizuru", "Mami", "Ruka", "Sumi"], genre: ["romance", "comedy"]},
+        {anime: "Fire Force", malId: 38671, names: ["Maki", "Tamaki", "Iris", "Hibana"], genre: ["action", "fantasy"]},
+        {anime: "Angel Beats", malId: 6547, names: ["Kanade", "Yuri", "Yui", "Iwasawa"], genre: ["fantasy", "slice-of-life"]},
+        {anime: "K-On!", malId: 5680, names: ["Yui", "Mio", "Azusa", "Ritsu", "Mugi"], genre: ["slice-of-life", "music"]},
+        {anime: "Clannad", malId: 2167, names: ["Nagisa", "Kyou", "Tomoyo", "Kotomi", "Fuko"], genre: ["romance", "slice-of-life"]},
+    ];
+
+    const hairColors = ["Black", "Brown", "Blonde", "Red", "Pink", "Blue", "Purple", "White", "Silver", "Green", "Orange"];
+    const eyeColors = ["Brown", "Blue", "Green", "Red", "Purple", "Gold", "Gray", "Pink", "Black", "Hazel"];
+    const roles = ["Main Character", "Protagonist", "Supporting", "Deuteragonist", "Main Heroine"];
+    const heights = ["145", "150", "153", "156", "159", "162", "165", "168", "171", "174"];
+    const ages = ["14", "15", "16", "17", "18", "19", "20", "21", "Unknown"];
+
+    const characters = [];
+    let charId = 0;
+
+    animeData.forEach(anime => {
+        anime.names.forEach(name => {
+            const hair = hairColors[Math.floor(Math.random() * hairColors.length)];
+            const eyes = eyeColors[Math.floor(Math.random() * eyeColors.length)];
+            const role = roles[Math.floor(Math.random() * roles.length)];
+            const height = heights[Math.floor(Math.random() * heights.length)];
+            const age = ages[Math.floor(Math.random() * ages.length)];
+            
+            const imageId = (charId % 50) + 1;
+            const image = `https://via.placeholder.com/280x320/818cf8/ffffff?text=${encodeURIComponent(name)}`;
+            
+            const gallery = [
+                image,
+                `https://via.placeholder.com/280x320/ec4899/ffffff?text=${encodeURIComponent(name)}+2`,
+                `https://via.placeholder.com/280x320/8b5cf6/ffffff?text=${encodeURIComponent(name)}+3`
             ];
 
-            return characters;
-        }
+            characters.push({
+                name, 
+                anime: anime.anime,
+                malId: anime.malId,
+                genre: anime.genre,
+                hair, eyes, age,
+                height: height + " cm",
+                role,
+                image,
+                gallery
+            });
+            charId++;
+        });
+    });
 
-        // Cookie functions
-        function setCookie(name, value, days) {
-            const expires = new Date(Date.now() + days * 864e5).toUTCString();
-            document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/';
-        }
+    return characters;
+}
 
-        function getCookie(name) {
-            return document.cookie.split('; ').reduce((r, v) => {
-                const parts = v.split('=');
-                return parts[0] === name ? decodeURIComponent(parts[1]) : r;
-            }, '');
-        }
+function setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/';
+}
 
-        function loadSettings() {
-            const savedLang = getCookie('waifuLang');
-            if (savedLang) {
-                currentLanguage = savedLang;
-                document.getElementById('languageSelect').value = savedLang;
-                applyTranslations();
-            }
-        }
+function getCookie(name) {
+    return document.cookie.split('; ').reduce((r, v) => {
+        const parts = v.split('=');
+        return parts[0] === name ? decodeURIComponent(parts[1]) : r;
+    }, '');
+}
 
-        function changeLanguage() {
-            currentLanguage = document.getElementById('languageSelect').value;
-            setCookie('waifuLang', currentLanguage, 365);
-            applyTranslations();
-        }
+function changeLanguage() {
+    currentLanguage = document.getElementById('languageSelect').value;
+    setCookie('waifuLang', currentLanguage, 365);
+    applyTranslations();
+}
 
-        function applyTranslations() {
-            const t = translations[currentLanguage];
-            
-            document.getElementById('headerTitle').textContent = t.headerTitle;
-            document.getElementById('headerTagline').textContent = t.headerTagline;
-            document.getElementById('tabBrowse').textContent = t.tabBrowse;
-            document.getElementById('tabRandom').textContent = t.tabRandom;
-            document.getElementById('tabRecognizer').textContent = t.tabRecognizer;
-            document.getElementById('searchInput').placeholder = t.searchPlaceholder;
-            document.getElementById('filterAll').textContent = t.filterAll;
-            document.getElementById('filterAction').textContent = t.filterAction;
-            document.getElementById('filterRomance').textContent = t.filterRomance;
-            document.getElementById('filterFantasy').textContent = t.filterFantasy;
-            document.getElementById('loadingText').textContent = t.loadingText;
-            document.getElementById('randomTitle').textContent = t.randomTitle;
-            document.getElementById('randomButton').textContent = t.randomButton;
-            document.getElementById('recognizerTitle').textContent = t.recognizerTitle;
-            document.getElementById('uploadTitle').textContent = t.uploadTitle;
-            document.getElementById('uploadDesc').textContent = t.uploadDesc;
-            document.getElementById('recognizeButton').textContent = t.recognizeButton;
-            document.getElementById('settingsHeader').textContent = t.settingsHeader;
-            document.getElementById('languageLabel').textContent = t.languageLabel;
-            document.getElementById('closeSettingsBtn').textContent = t.closeSettingsBtn;
-        }
+function applyTranslations() {
+    const t = translations[currentLanguage];
+    document.getElementById('headerTitle').textContent = t.headerTitle;
+    document.getElementById('headerTagline').textContent = t.headerTagline;
+    document.getElementById('tabBrowse').textContent = t.tabBrowse;
+    document.getElementById('tabRandom').textContent = t.tabRandom;
+    document.getElementById('tabRecognizer').textContent = t.tabRecognizer;
+}
 
-        function openSettings() {
-            document.getElementById('settingsModal').classList.add('active');
-        }
+function loadSettings() {
+    const savedLang = getCookie('waifuLang');
+    if (savedLang) {
+        currentLanguage = savedLang;
+        document.getElementById('languageSelect').value = savedLang;
+        applyTranslations();
+    }
+}
 
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.remove('active');
-        }
+function openSettings() {
+    document.getElementById('settingsModal').classList.add('active');
+}
 
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+function closeSettings() {
+    document.getElementById('settingsModal').classList.remove('active');
+}
 
-            if (tab === 'browse') {
-                document.getElementById('browseTab').classList.add('active');
-                document.querySelectorAll('.nav-tab')[0].classList.add('active');
-            } else if (tab === 'random') {
-                document.getElementById('randomTab').classList.add('active');
-                document.querySelectorAll('.nav-tab')[1].classList.add('active');
-            } else if (tab === 'recognizer') {
-                document.getElementById('recognizerTab').classList.add('active');
-                document.querySelectorAll('.nav-tab')[2].classList.add('active');
-            }
-        }
+function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
 
-        function initializeApp() {
-            allCharacters = initializeDatabase();
-            filteredCharacters = [...allCharacters];
-            loadSettings();
+    if (tab === 'browse') {
+        document.getElementById('browseTab').classList.add('active');
+        document.querySelectorAll('.nav-tab')[0].classList.add('active');
+    } else if (tab === 'random') {
+        document.getElementById('randomTab').classList.add('active');
+        document.querySelectorAll('.nav-tab')[1].classList.add('active');
+    } else if (tab === 'recognizer') {
+        document.getElementById('recognizerTab').classList.add('active');
+        document.querySelectorAll('.nav-tab')[2].classList.add('active');
+    }
+}
+
+function displayCharacters(characters) {
+    const grid = document.getElementById('waifuGrid');
+    const t = translations[currentLanguage];
+    
+    if (characters.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-light);">Karakter tidak ditemukan</div>';
+        return;
+    }
+
+    grid.innerHTML = characters.map((char, index) => `
+        <div class="waifu-card" onclick="showModal(${allCharacters.indexOf(char)})">
+            <div class="waifu-image">
+                <img src="${char.image}" alt="${char.name}">
+            </div>
+            <div class="waifu-info">
+                <div class="waifu-name">${char.name}</div>
+                <div class="waifu-anime">${char.anime}</div>
+                <div class="detail-row">
+                    <span>${t.hair}:</span>
+                    <span>${char.hair}</span>
+                </div>
+                <div class="detail-row">
+                    <span>${t.eyes}:</span>
+                    <span>${char.eyes}</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function setupEventListeners() {
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        filteredCharacters = allCharacters.filter(char => 
+            char.name.toLowerCase().includes(searchTerm) ||
+            char.anime.toLowerCase().includes(searchTerm)
+        );
+        applyFilters();
+        displayCharacters(filteredCharacters);
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            applyFilters();
             displayCharacters(filteredCharacters);
-            setupEventListeners();
-            setupDragDrop();
-        }
-
-        function displayCharacters(characters) {
-            const grid = document.getElementById('waifuGrid');
-            const t = translations[currentLanguage];
-            
-            if (characters.length === 0) {
-                grid.innerHTML = `<div class="no-results">${t.noResults}</div>`;
-                return;
-            }
-
-            grid.innerHTML = characters.map((char, index) => `
-                <div class="waifu-card" onclick="showModal(${allCharacters.indexOf(char)})">
-                    <div class="waifu-image">
-                        <img src="${char.image}" alt="${char.name}" onerror="this.src='https://via.placeholder.com/280x320/818cf8/ffffff?text=${encodeURIComponent(char.name)}'">
-                    </div>
-                    <div class="waifu-info">
-                        <h3 class="waifu-name">${char.name}</h3>
-                        <div class="waifu-anime">${char.anime}</div>
-                        <div class="waifu-details">
-                            <div class="detail-row">
-                                <span class="detail-label">${t.hair}:</span>
-                                <span class="detail-value">${char.hair}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">${t.eyes}:</span>
-                                <span class="detail-value">${char.eyes}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">${t.age}:</span>
-                                <span class="detail-value">${char.age}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">${t.height}:</span>
-                                <span class="detail-value">${char.height}</span>
-                            </div>
-                        </div>
-                        <a href="https://myanimelist.net/anime/${char.malId}" target="_blank" class="mal-link" onclick="event.stopPropagation()">
-                            ${t.malLink}
-                        </a>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function setupEventListeners() {
-            const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                filteredCharacters = allCharacters.filter(char => 
-                    char.name.toLowerCase().includes(searchTerm) ||
-                    char.anime.toLowerCase().includes(searchTerm)
-                );
-                
-                applyFilters();
-                displayCharacters(filteredCharacters);
-            });
-
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    
-                    currentFilter = btn.dataset.filter;
-                    applyFilters();
-                    displayCharacters(filteredCharacters);
-                });
-            });
-        }
-
-        function applyFilters() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            
-            filteredCharacters = allCharacters.filter(char => {
-                const matchesSearch = char.name.toLowerCase().includes(searchTerm) ||
-                                    char.anime.toLowerCase().includes(searchTerm);
-                
-                if (currentFilter === 'all') return matchesSearch;
-                return matchesSearch && char.genre.includes(currentFilter);
-            });
-        }
-
-        function generateRandom() {
-            const randomChar = allCharacters[Math.floor(Math.random() * allCharacters.length)];
-            const resultDiv = document.getElementById('randomResult');
-            const t = translations[currentLanguage];
-            
-            resultDiv.innerHTML = `
-                <div class="waifu-card" style="max-width: 400px; margin: 0 auto;" onclick="showModal(${allCharacters.indexOf(randomChar)})">
-                    <div class="waifu-image">
-                        <img src="${randomChar.image}" alt="${randomChar.name}" onerror="this.src='https://via.placeholder.com/280x320/818cf8/ffffff?text=${encodeURIComponent(randomChar.name)}'">
-                    </div>
-                    <div class="waifu-info">
-                        <h3 class="waifu-name">${randomChar.name}</h3>
-                        <div class="waifu-anime">${randomChar.anime}</div>
-                        <div class="waifu-details">
-                            <div class="detail-row">
-                                <span class="detail-label">${t.hair}:</span>
-                                <span class="detail-value">${randomChar.hair}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">${t.eyes}:</span>
-                                <span class="detail-value">${randomChar.eyes}</span>
-                            </div>
-                        </div>
-                        <a href="https://myanimelist.net/anime/${randomChar.malId}" target="_blank" class="mal-link" onclick="event.stopPropagation()">
-                            ${t.malLink}
-                        </a>
-                    </div>
-                </div>
-            `;
-        }
-
-        function setupDragDrop() {
-            const uploadArea = document.getElementById('uploadArea');
-            
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, preventDefaults, false);
-            });
-
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            ['dragenter', 'dragover'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, () => {
-                    uploadArea.classList.add('dragover');
-                }, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, () => {
-                    uploadArea.classList.remove('dragover');
-                }, false);
-            });
-
-            uploadArea.addEventListener('drop', (e) => {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                if (files.length > 0) {
-                    handleFiles(files);
-                }
-            }, false);
-        }
-
-        function handleImageUpload(event) {
-            const files = event.target.files;
-            handleFiles(files);
-        }
-
-        function handleFiles(files) {
-            if (files.length > 0) {
-                const file = files[0];
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        uploadedImage = e.target.result;
-                        document.getElementById('previewImage').src = e.target.result;
-                        document.getElementById('previewContainer').style.display = 'block';
-                        document.getElementById('recognitionResults').innerHTML = '';
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
-        }
-
-        function recognizeCharacter() {
-            if (!uploadedImage) return;
-
-            const t = translations[currentLanguage];
-            const numResults = 3;
-            const shuffled = [...allCharacters].sort(() => 0.5 - Math.random());
-            const results = shuffled.slice(0, numResults);
-            
-            const confidences = [0.85, 0.65, 0.45].map(c => c + (Math.random() * 0.1 - 0.05));
-
-            const resultsDiv = document.getElementById('recognitionResults');
-            resultsDiv.innerHTML = `
-                <div class="recognition-results">
-                    <h3 style="margin-bottom: 1.5rem; color: var(--primary);">${t.recognitionResults}</h3>
-                    ${results.map((char, i) => `
-                        <div class="result-item" onclick="showModal(${allCharacters.indexOf(char)})" style="cursor: pointer;">
-                            <div style="flex: 1;">
-                                <div style="font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">${char.name}</div>
-                                <div style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.5rem;">${char.anime}</div>
-                                <div style="font-size: 0.85rem; color: var(--text-light);">${t.confidence}: ${(confidences[i] * 100).toFixed(1)}%</div>
-                                <div class="confidence-bar">
-                                    <div class="confidence-fill" style="width: ${confidences[i] * 100}%"></div>
-                                </div>
-                            </div>
-                            <img src="${char.image}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-left: 1rem;" onerror="this.src='https://via.placeholder.com/80x80/818cf8/ffffff?text=${encodeURIComponent(char.name.charAt(0))}'">
-                        </div>
-                    `).join('')}
-                    <p style="margin-top: 1.5rem; color: var(--text-light); font-size: 0.9rem; text-align: center;">
-                        ${t.recognitionNote}
-                    </p>
-                </div>
-            `;
-        }
-
-        function showModal(index) {
-            const char = allCharacters[index];
-            const modal = document.getElementById('waifuModal');
-            const modalDetails = document.getElementById('modalDetails');
-            const t = translations[currentLanguage];
-
-            modalDetails.innerHTML = `
-                <img src="${char.image}" alt="${char.name}" class="modal-image" onerror="this.src='https://via.placeholder.com/800x400/818cf8/ffffff?text=${encodeURIComponent(char.name)}'">
-                
-                <div class="modal-header">
-                    <h2 class="modal-name">${char.name}</h2>
-                    <p class="modal-anime">${char.anime}</p>
-                    <a href="https://myanimelist.net/anime/${char.malId}" target="_blank" class="mal-link" style="display: inline-flex; margin-top: 1rem;">
-                        ${t.malLink}
-                    </a>
-                </div>
-
-                <div class="info-section">
-                    <h3 class="info-title">${t.basicInfo}</h3>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="detail-label">${t.age}:</span>
-                            <span class="detail-value">${char.age}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="detail-label">${t.height}:</span>
-                            <span class="detail-value">${char.height}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="detail-label">${t.hair}:</span>
-                            <span class="detail-value">${char.hair}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="detail-label">${t.eyes}:</span>
-                            <span class="detail-value">${char.eyes}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="detail-label">${t.role}:</span>
-                            <span class="detail-value">${char.role}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="info-section">
-                    <h3 class="info-title">${t.genres}</h3>
-                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                        ${char.genre.map(g => `
-                            <span style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; text-transform: capitalize;">
-                                ${g}
-                            </span>
-                        `).join('')}
-                    </div>
-                </div>
-
-                <div class="info-section">
-                    <h3 class="info-title">${t.about} ${char.name}</h3>
-                    <p style="line-height: 1.8; color: var(--text-dark);">
-                        ${char.name} is a ${char.role.toLowerCase()} from the anime "${char.anime}". 
-                        She is characterized by her ${char.hair.toLowerCase()} hair and ${char.eyes.toLowerCase()} eyes.
-                    </p>
-                </div>
-            `;
-
-            modal.classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('waifuModal').classList.remove('active');
-        }
-
-        document.getElementById('waifuModal').addEventListener('click', (e) => {
-            if (e.target.id === 'waifuModal') {
-                closeModal();
-            }
         });
+    });
+}
 
-        document.getElementById('settingsModal').addEventListener('click', (e) => {
-            if (e.target.id === 'settingsModal') {
-                closeSettings();
-            }
-        });
+function applyFilters() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    filteredCharacters = allCharacters.filter(char => {
+        const matchesSearch = char.name.toLowerCase().includes(searchTerm) || char.anime.toLowerCase().includes(searchTerm);
+        if (currentFilter === 'all') return matchesSearch;
+        return matchesSearch && char.genre.includes(currentFilter);
+    });
+}
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeModal();
-                closeSettings();
-            }
-        });
+function generateRandom() {
+    const randomChar = allCharacters[Math.floor(Math.random() * allCharacters.length)];
+    const resultDiv = document.getElementById('randomResult');
+    const t = translations[currentLanguage];
+    
+    resultDiv.innerHTML = `
+        <div class="waifu-card" style="max-width: 350px; margin: 0 auto;" onclick="showModal(${allCharacters.indexOf(randomChar)})">
+            <div class="waifu-image">
+                <img src="${randomChar.image}" alt="${randomChar.name}">
+            </div>
+            <div class="waifu-info">
+                <div class="waifu-name">${randomChar.name}</div>
+                <div class="waifu-anime">${randomChar.anime}</div>
+                <div class="detail-row"><span>${t.hair}:</span><span>${randomChar.hair}</span></div>
+                <div class="detail-row"><span>${t.eyes}:</span><span>${randomChar.eyes}</span></div>
+            </div>
+        </div>
+    `;
+}
 
-        document.addEventListener('DOMContentLoaded', initializeApp);
+function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('previewImage').src = e.target.result;
+            document.getElementById('previewImage').style.display = 'block';
+            document.getElementById('recognizeBtn').style.display = 'inline-block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function recognizeCharacter() {
+    const results = [...allCharacters].sort(() => 0.5 - Math.random()).slice(0, 3);
+    const confidences = [0.87, 0.72, 0.54];
+    
+    document.getElementById('recognitionResults').innerHTML = `
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; margin-top: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <h3 style="color: var(--primary); margin-bottom: 1rem;">Hasil Pengenalan</h3>
+            ${results.map((char, i) => `
+                <div onclick="showModal(${allCharacters.indexOf(char)})" style="cursor: pointer; padding: 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 1rem;">
+                    <img src="${char.image}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; color: var(--primary);">${char.name}</div>
+                        <div style="font-size: 0.85rem; color: var(--text-light);">${char.anime}</div>
+                        <div style="font-size: 0.8rem; margin-top: 0.3rem;">Kepercayaan: ${(confidences[i] * 100).toFixed(1)}%</div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function showModal(index) {
+    const char = allCharacters[index];
+    const t = translations[currentLanguage];
+    const modal = document.getElementById('waifuModal');
+    
+    document.getElementById('modalDetails').innerHTML = `
+        <img src="${char.image}" class="modal-image">
+        <div class="modal-name">${char.name}</div>
+        <div class="modal-anime">${char.anime}</div>
+        
+        <div class="info-section">
+            <div class="info-title">${t.basicInfo}</div>
+            <div class="info-grid">
+                <div class="info-item"><span>${t.hair}:</span><span>${char.hair}</span></div>
+                <div class="info-item"><span>${t.eyes}:</span><span>${char.eyes}</span></div>
+                <div class="info-item"><span>${t.age}:</span><span>${char.age}</span></div>
+                <div class="info-item"><span>${t.height}:</span><span>${char.height}</span></div>
+                <div class="info-item"><span>${t.role}:</span><span>${char.role}</span></div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-title">${t.gallery}</div>
+            <div class="gallery-grid">
+                ${char.gallery.map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('')}
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-title">${t.genres}</div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                ${char.genre.map(g => `<span style="background: var(--primary); color: white; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem;">${g}</span>`).join('')}
+            </div>
+        </div>
+    `;
+    
+    modal.classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('waifuModal').classList.remove('active');
+}
+
+document.getElementById('waifuModal').addEventListener('click', (e) => {
+    if (e.target.id === 'waifuModal') closeModal();
+});
+
+document.getElementById('settingsModal').addEventListener('click', (e) => {
+    if (e.target.id === 'settingsModal') closeSettings();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    allCharacters = initializeDatabase();
+    filteredCharacters = [...allCharacters];
+    loadSettings();
+    displayCharacters(filteredCharacters);
+    setupEventListeners();
+    console.log(`Database loaded: ${allCharacters.length} characters`);
+});
     </script>
 </body>
 </html>
