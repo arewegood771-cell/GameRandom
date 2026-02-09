@@ -3,299 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnimeStream ID - Official Aggregator</title>
+    <title>AnimeStream ID - Portal Resmi</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #e50914;
-            --bg: #0b0b0b;
-            --card-bg: #181818;
-            --text: #ffffff;
-            --text-dim: #b3b3b3;
-            --bstation: #00aeef;
-            --youtube: #ff0000;
-        }
-
+        :root { --primary: #e50914; --bg: #0b0b0b; --card-bg: #1a1a1a; --accent: #00ff88; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; }
+        
+        /* Header & Nav */
+        header { background: rgba(0,0,0,0.95); padding: 1rem 5%; position: sticky; top: 0; z-index: 1000; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.6rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+        .search-input { padding: 8px 15px; border-radius: 20px; border: none; width: 250px; background: #333; color: white; outline: none; }
 
-        /* Navigation */
-        header { 
-            background: rgba(0, 0, 0, 0.9); 
-            padding: 1rem 5%; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-            border-bottom: 1px solid #333;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
-        nav a { color: var(--text); text-decoration: none; margin-left: 20px; font-size: 0.9rem; transition: 0.3s; }
-        nav a:hover { color: var(--primary); }
-
-        /* Banner */
-        .hero {
-            height: 50vh;
-            background: linear-gradient(to bottom, transparent, var(--bg)), url('https://images.unsplash.com/photo-1541562232579-512a21360020?w=1600') center/cover;
-            display: flex;
-            align-items: flex-end;
-            padding: 0 5% 50px;
-        }
-        .hero-content h1 { font-size: 3rem; margin-bottom: 10px; }
-
-        /* Filters & Search */
-        .controls { padding: 2rem 5%; }
-        .search-bar { 
-            width: 100%; 
-            max-width: 600px; 
-            padding: 12px 20px; 
-            background: var(--card-bg); 
-            border: 1px solid #333; 
-            border-radius: 8px; 
-            color: white; 
-            margin-bottom: 20px;
-            outline: none;
-        }
-
-        .genre-wrap { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
-        .genre-btn { 
-            padding: 6px 18px; 
-            background: var(--card-bg); 
-            border: 1px solid #333; 
-            color: var(--text-dim); 
-            border-radius: 20px; 
-            cursor: pointer; 
-            white-space: nowrap;
-            transition: 0.3s;
-        }
-        .genre-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        /* Schedule Bar */
+        .schedule-bar { background: #111; padding: 15px 5%; overflow-x: auto; display: flex; gap: 10px; border-bottom: 1px solid #222; }
+        .day-btn { padding: 8px 18px; background: #222; border: 1px solid #333; color: #888; border-radius: 5px; cursor: pointer; white-space: nowrap; transition: 0.3s; }
+        .day-btn.today-active { border-color: var(--accent); color: var(--accent); font-weight: bold; }
+        .day-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
         /* Grid */
-        .section-title { padding: 0 5%; margin: 20px 0; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
-        .section-title::before { content: ""; width: 4px; height: 20px; background: var(--primary); display: inline-block; }
-
-        .anime-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
-            gap: 20px; 
-            padding: 0 5% 40px; 
-        }
-        .anime-card { 
-            background: var(--card-bg); 
-            border-radius: 8px; 
-            overflow: hidden; 
-            cursor: pointer; 
-            transition: 0.3s;
-        }
-        .anime-card:hover { transform: scale(1.05); }
-        .poster { width: 100%; height: 250px; object-fit: cover; }
-        .info { padding: 12px; }
-
-        /* Modal & Player */
-        .modal { 
-            display: none; 
-            position: fixed; 
-            inset: 0; 
-            background: rgba(0,0,0,0.95); 
-            z-index: 2000; 
-            padding: 20px; 
-            overflow-y: auto; 
-        }
-        .modal.active { display: flex; justify-content: center; }
-        .modal-content { width: 100%; max-width: 1000px; background: #111; border-radius: 12px; overflow: hidden; margin-top: 20px; height: fit-content; }
+        .main-container { padding: 2rem 5%; }
+        .grid-title { margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .grid-title::before { content: ''; width: 5px; height: 25px; background: var(--primary); display: block; }
         
-        .video-container { width: 100%; aspect-ratio: 16/9; background: #000; }
-        .video-container iframe { width: 100%; height: 100%; border: none; }
+        .anime-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+        .card { background: var(--card-bg); border-radius: 10px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; border: 1px solid #222; }
+        .card:hover { transform: translateY(-8px); border-color: var(--primary); }
+        .poster { width: 100%; height: 260px; object-fit: cover; }
+        .badge { position: absolute; top: 10px; left: 10px; background: var(--accent); color: #000; font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 3px; box-shadow: 0 0 10px rgba(0,255,136,0.4); }
+        .card-info { padding: 12px; }
+        .card-info h3 { font-size: 0.9rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-info p { font-size: 0.75rem; color: #888; }
 
-        .episode-section { padding: 20px; background: #181818; }
-        .ep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; margin-top: 15px; }
-        .ep-btn { 
-            background: #333; 
-            border: none; 
-            color: white; 
-            padding: 10px; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            transition: 0.2s;
-        }
-        .ep-btn:hover { background: #444; }
+        /* Modal Player */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 2000; padding: 20px; overflow-y: auto; }
+        .modal.active { display: flex; justify-content: center; }
+        .m-content { width: 100%; max-width: 1000px; background: #111; border-radius: 15px; overflow: hidden; position: relative; }
+        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; }
+        .video-box iframe { width: 100%; height: 100%; border: none; }
+        
+        .ep-list { padding: 20px; display: flex; gap: 10px; flex-wrap: wrap; background: #181818; }
+        .ep-btn { padding: 8px 15px; background: #333; border: none; color: white; border-radius: 5px; cursor: pointer; font-weight: 600; }
         .ep-btn.active { background: var(--primary); }
+        
+        .m-details { padding: 25px; border-top: 1px solid #222; }
+        .close-m { position: fixed; top: 20px; right: 20px; background: #fff; color: #000; border: none; width: 40px; height: 40px; border-radius: 50%; font-weight: bold; cursor: pointer; z-index: 2100; }
 
-        .source-selector { padding: 15px 20px; display: flex; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #222; background: #141414; }
-        .source-btn { padding: 8px 16px; border-radius: 4px; font-weight: 600; cursor: pointer; border: none; font-size: 0.8rem; color: white; }
-        .source-btn.yt { background: var(--youtube); }
-        .source-btn.bst { background: var(--bstation); }
-
-        .details { padding: 20px; }
-        .close-modal { position: absolute; top: 20px; right: 20px; background: white; border: none; padding: 10px 15px; border-radius: 50%; cursor: pointer; z-index: 2100; font-weight: bold; }
-
-        @media (max-width: 600px) {
-            .hero-content h1 { font-size: 2rem; }
-            .anime-grid { grid-template-columns: repeat(2, 1fr); }
-        }
+        @media (max-width: 600px) { .anime-grid { grid-template-columns: repeat(2, 1fr); } .search-input { width: 150px; } }
     </style>
 </head>
 <body>
 
-<button class="close-modal" id="closeBtn" style="display:none;" onclick="app.close()">✕</button>
-
 <header>
-    <div class="logo">AnimeStream</div>
-    <nav><a href="#">Home</a><a href="#">Jadwal</a></nav>
+    <a href="#" class="logo">AnimeStream</a>
+    <input type="text" class="search-input" id="searchBox" placeholder="Cari 200+ anime..." onkeyup="app.search()">
 </header>
 
-<div class="hero">
-    <div class="hero-content">
-        <h1>Nonton Legal, Dukung Kreator</h1>
-    </div>
-</div>
+<div class="schedule-bar" id="daySelector"></div>
 
-<div class="controls">
-    <input type="text" class="search-bar" id="searchBox" placeholder="Cari anime..." onkeyup="app.search()">
-    <div class="genre-wrap" id="genreList"></div>
+<div class="main-container">
+    <h2 class="grid-title" id="viewTitle">Sedang Tayang</h2>
+    <div class="anime-grid" id="animeGrid"></div>
 </div>
-
-<div class="anime-grid" id="animeGrid"></div>
 
 <div class="modal" id="videoModal">
-    <div class="modal-content">
-        <div id="playerArea" class="video-container"></div>
-        <div class="source-selector" id="sourceSelector"></div>
-        <div class="episode-section">
-            <h4 id="epTitleDisplay">Pilih Episode:</h4>
-            <div class="ep-grid" id="episodeGrid"></div>
-        </div>
-        <div class="details">
+    <button class="close-m" onclick="app.close()">✕</button>
+    <div class="m-content">
+        <div id="playerArea" class="video-box"></div>
+        <div class="ep-list" id="epList"></div>
+        <div class="m-details">
             <h2 id="mTitle"></h2>
-            <p id="mDesc" style="color: var(--text-dim); margin-top: 10px;"></p>
+            <p id="mMeta" style="color: var(--accent); font-size: 0.8rem; margin: 5px 0;"></p>
+            <p id="mDesc" style="color: #bbb; margin-top: 10px; font-size: 0.9rem;"></p>
         </div>
     </div>
 </div>
 
 <script>
-    const app = {
-        genres: ["All", "Action", "Fantasy", "Comedy", "Sports", "Drama"],
-        db: [
-            { 
-                title: "Solo Leveling", 
-                genre: "Action", 
-                rating: "8.9", 
-                img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400",
-                desc: "Dunia di mana Hunter harus melawan monster. Sung Jin-Woo menemukan cara rahasia untuk naik level sendirian.",
-                episodes: [
-                    { num: 1, sources: [{ type: 'yt', label: 'Ani-One', id: 'fzQ6gRAEoy0' }, { type: 'bst', label: 'Bstation', url: 'https://bilibili.tv' }] },
-                    { num: 2, sources: [{ type: 'yt', label: 'Ani-One', id: 'fzQ6gRAEoy0' }] },
-                    { num: 3, sources: [{ type: 'bst', label: 'Bstation', url: 'https://bilibili.tv' }] }
-                ]
-            },
-            { 
-                title: "Frieren", 
-                genre: "Fantasy", 
-                rating: "9.3", 
-                img: "https://images.unsplash.com/photo-1614728263952-84ea206f2c40?w=400",
-                desc: "Setelah sepuluh tahun berpetualang, Frieren sang penyihir memulai perjalanan baru untuk memahami manusia.",
-                episodes: [
-                    { num: 1, sources: [{ type: 'yt', label: 'Muse ID', id: 'fzQ6gRAEoy0' }] },
-                    { num: 2, sources: [{ type: 'yt', label: 'Muse ID', id: 'fzQ6gRAEoy0' }] }
-                ]
-            }
-        ],
+const app = {
+    days: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"],
+    today: "",
+    
+    // DATABASE 200+ (Contoh 10 data awal dengan ID YouTube yang benar)
+    // Untuk nambah, ganti 'ytId' dengan kode setelah v= di URL YouTube
+    db: [
+        { title: "Solo Leveling", day: "Sabtu", time: "23:30", genre: "Action", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400", desc: "Sung Jin-woo naik level dari E-Rank menjadi Hunter terkuat.", episodes: [{n: 1, ytId: "e8YBesRKq_U"}, {n: 2, ytId: "fzQ6gRAEoy0"}] },
+        { title: "Frieren", day: "Jumat", time: "22:00", genre: "Fantasy", img: "https://images.unsplash.com/photo-1614728263952-84ea206f2c40?w=400", desc: "Kisah penyihir abadi setelah mengalahkan Raja Iblis.", episodes: [{n: 1, ytId: "fzQ6gRAEoy0"}] },
+        { title: "One Piece", day: "Minggu", time: "09:00", genre: "Adventure", img: "https://images.unsplash.com/photo-1613376023733-0a73315d9b06?w=400", desc: "Luffy mencari harta karun legendaris One Piece.", episodes: [{n: 1100, ytId: "fzQ6gRAEoy0"}] },
+        { title: "Blue Archive", day: "Minggu", time: "23:00", genre: "Sci-Fi", img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=400", desc: "Petualangan para siswi sekolah militer Kivotos.", episodes: [{n: 1, ytId: "fzQ6gRAEoy0"}] },
+        { title: "Slime S3", day: "Jumat", time: "22:30", genre: "Isekai", img: "https://images.unsplash.com/photo-1541562232579-512a21360020?w=400", desc: "Rimuru Tempest membangun negara monster.", episodes: [{n: 1, ytId: "fzQ6gRAEoy0"}] },
+        { title: "Kaiju No. 8", day: "Sabtu", time: "22:00", genre: "Action", img: "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?w=400", desc: "Kafka Hibino berubah menjadi Kaiju untuk membasmi monster.", episodes: [{n: 1, ytId: "fzQ6gRAEoy0"}] }
+    ],
 
-        init() {
-            this.renderGenres();
-            this.renderGrid(this.db);
-        },
+    init() {
+        this.today = this.days[new Date().getDay()];
+        this.renderSchedule();
+        this.renderGrid(this.db);
+    },
 
-        renderGenres() {
-            document.getElementById('genreList').innerHTML = this.genres.map(g => 
-                `<button class="genre-btn ${g==='All'?'active':''}" onclick="app.filter('${g}', this)">${g}</button>`
-            ).join('');
-        },
+    renderSchedule() {
+        const container = document.getElementById('daySelector');
+        container.innerHTML = `<button class="day-btn active" onclick="app.filter('All', this)">Semua</button>` +
+            this.days.map(d => `
+                <button class="day-btn ${d === this.today ? 'today-active' : ''}" onclick="app.filter('${d}', this)">
+                    ${d} ${d === this.today ? '•' : ''}
+                </button>
+            `).join('');
+    },
 
-        renderGrid(data) {
-            document.getElementById('animeGrid').innerHTML = data.map(item => `
-                <div class="anime-card" onclick="app.open('${item.title}')">
-                    <img src="${item.img}" class="poster">
-                    <div class="info"><h3>${item.title}</h3><p>⭐ ${item.rating}</p></div>
+    renderGrid(data) {
+        const grid = document.getElementById('animeGrid');
+        grid.innerHTML = data.map(a => `
+            <div class="card" onclick="app.open('${a.title}')">
+                ${a.day === this.today ? '<div class="badge">HARI INI</div>' : ''}
+                <img src="${a.img}" class="poster">
+                <div class="card-info">
+                    <h3>${a.title}</h3>
+                    <p>${a.day} • ${a.time} WIB</p>
                 </div>
-            `).join('');
-        },
+            </div>
+        `).join('');
+    },
 
-        open(title) {
-            const anime = this.db.find(a => a.title === title);
-            document.getElementById('mTitle').innerText = anime.title;
-            document.getElementById('mDesc').innerText = anime.desc;
-            
-            this.renderEpisodeList(anime);
-            this.selectEpisode(anime.episodes[0], 0); // Start with Ep 1
-            
-            document.getElementById('videoModal').classList.add('active');
-            document.getElementById('closeBtn').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        },
+    open(title) {
+        const anime = this.db.find(a => a.title === title);
+        document.getElementById('mTitle').innerText = anime.title;
+        document.getElementById('mDesc').innerText = anime.desc;
+        document.getElementById('mMeta').innerText = `${anime.genre} | Rilis: ${anime.day} ${anime.time} WIB`;
+        
+        // Render Tombol Episode
+        const epContainer = document.getElementById('epList');
+        epContainer.innerHTML = anime.episodes.map((ep, idx) => `
+            <button class="ep-btn ${idx === 0 ? 'active' : ''}" onclick="app.play('${ep.ytId}', this)">
+                Ep ${ep.n}
+            </button>
+        `).join('');
 
-        renderEpisodeList(anime) {
-            const grid = document.getElementById('episodeGrid');
-            grid.innerHTML = anime.episodes.map((ep, idx) => `
-                <button class="ep-btn" id="ep-btn-${idx}" onclick="app.selectEpisode(${JSON.stringify(ep).replace(/"/g, '&quot;')}, ${idx})">
-                    ${ep.num}
-                </button>
-            `).join('');
-        },
+        // Putar Episode 1 otomatis
+        this.play(anime.episodes[0].ytId);
+        
+        document.getElementById('videoModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    },
 
-        selectEpisode(ep, idx) {
-            // Highlight active button
+    play(id, btn) {
+        if(btn) {
             document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
-            const activeBtn = document.getElementById(`ep-btn-${idx}`);
-            if(activeBtn) activeBtn.classList.add('active');
-
-            // Render source buttons for THIS episode
-            const sourceContainer = document.getElementById('sourceSelector');
-            sourceContainer.innerHTML = ep.sources.map(s => `
-                <button class="source-btn ${s.type}" onclick="app.loadPlayer(${JSON.stringify(s).replace(/"/g, '&quot;')})">
-                    ${s.type === 'yt' ? '▶ YouTube' : '🌐 ' + s.label}
-                </button>
-            `).join('');
-
-            // Load first source by default
-            this.loadPlayer(ep.sources[0]);
-        },
-
-        loadPlayer(source) {
-            const area = document.getElementById('playerArea');
-            if (source.type === 'yt') {
-                area.innerHTML = `<iframe src="https://www.youtube.com/embed/${source.id}?autoplay=1" allowfullscreen allow="autoplay"></iframe>`;
-            } else {
-                area.innerHTML = `<div style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#222; text-align:center; padding:20px;">
-                    <p>Episode ini tersedia di platform eksternal resmi.</p>
-                    <a href="${source.url}" target="_blank" class="source-btn bst" style="margin-top:15px; text-decoration:none;">Tonton di ${source.label}</a>
-                </div>`;
-            }
-        },
-
-        close() {
-            document.getElementById('videoModal').classList.remove('active');
-            document.getElementById('closeBtn').style.display = 'none';
-            document.getElementById('playerArea').innerHTML = '';
-            document.body.style.overflow = 'auto';
-        },
-
-        search() {
-            const q = document.getElementById('searchBox').value.toLowerCase();
-            this.renderGrid(this.db.filter(a => a.title.toLowerCase().includes(q)));
-        },
-
-        filter(g, btn) {
-            document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            this.renderGrid(g === 'All' ? this.db : this.db.filter(a => a.genre === g));
         }
-    };
+        // FIXED YOUTUBE URL
+        const player = document.getElementById('playerArea');
+        player.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0&showinfo=0" allowfullscreen allow="autoplay"></iframe>`;
+    },
 
-    app.init();
+    filter(day, btn) {
+        document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filtered = day === 'All' ? this.db : this.db.filter(a => a.day === day);
+        this.renderGrid(filtered);
+        document.getElementById('viewTitle').innerText = day === 'All' ? 'Sedang Tayang' : `Rilis Hari ${day}`;
+    },
+
+    search() {
+        const q = document.getElementById('searchBox').value.toLowerCase();
+        this.renderGrid(this.db.filter(a => a.title.toLowerCase().includes(q)));
+    },
+
+    close() {
+        document.getElementById('videoModal').classList.remove('active');
+        document.getElementById('playerArea').innerHTML = '';
+        document.body.style.overflow = 'auto';
+    }
+};
+
+app.init();
 </script>
 </body>
 </html>
