@@ -1,182 +1,1343 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnimeStream ID - Portal Resmi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --primary: #e50914; --bg: #0b0b0b; --card-bg: #1a1a1a; --accent: #00ff88; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; }
-        
-        /* Header & Nav */
-        header { background: rgba(0,0,0,0.95); padding: 1rem 5%; position: sticky; top: 0; z-index: 1000; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.6rem; font-weight: 700; color: var(--primary); text-decoration: none; }
-        .search-input { padding: 8px 15px; border-radius: 20px; border: none; width: 250px; background: #333; color: white; outline: none; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🏝️ Island RPG</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.60.0/phaser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden; touch-action:none; font-family:'Courier New',monospace; }
 
-        /* Schedule Bar */
-        .schedule-bar { background: #111; padding: 15px 5%; overflow-x: auto; display: flex; gap: 10px; border-bottom: 1px solid #222; }
-        .day-btn { padding: 8px 18px; background: #222; border: 1px solid #333; color: #888; border-radius: 5px; cursor: pointer; white-space: nowrap; transition: 0.3s; }
-        .day-btn.today-active { border-color: var(--accent); color: var(--accent); font-weight: bold; }
-        .day-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+/* ===== LOGIN ===== */
+#login-screen {
+  position:fixed; inset:0; z-index:999;
+  background:radial-gradient(ellipse at 50% 40%, #0a1628 0%, #000 80%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+}
+#login-screen h1 {
+  font-size:clamp(22px,5vw,44px); color:#7fff7f;
+  text-shadow:0 0 20px #00ff88,0 0 50px #007744;
+  letter-spacing:4px; text-align:center; animation:glow 2.5s infinite;
+}
+@keyframes glow {
+  0%,100%{text-shadow:0 0 20px #00ff88,0 0 40px #007744;}
+  50%{text-shadow:0 0 40px #00ff88,0 0 80px #00aa55,0 0 120px #004422;}
+}
+#login-screen input {
+  padding:10px 20px; font-size:18px; width:270px; text-align:center;
+  background:rgba(0,255,136,0.07); border:1px solid #00ff88;
+  color:#7fff7f; border-radius:6px; outline:none; font-family:inherit;
+}
+#login-screen button {
+  padding:11px 32px; font-size:20px; font-weight:bold;
+  background:#00aa55; color:#000; border:none; border-radius:6px;
+  cursor:pointer; letter-spacing:2px; transition:all 0.2s; font-family:inherit;
+}
+#login-screen button:hover{background:#00ff88;transform:scale(1.05);}
+#login-screen .hint{color:#555;font-size:12px;text-align:center;}
 
-        /* Grid */
-        .main-container { padding: 2rem 5%; }
-        .grid-title { margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
-        .grid-title::before { content: ''; width: 5px; height: 25px; background: var(--primary); display: block; }
-        
-        .anime-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
-        .card { background: var(--card-bg); border-radius: 10px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; border: 1px solid #222; }
-        .card:hover { transform: translateY(-8px); border-color: var(--primary); }
-        .poster { width: 100%; height: 260px; object-fit: cover; }
-        .badge { position: absolute; top: 10px; left: 10px; background: var(--accent); color: #000; font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 3px; box-shadow: 0 0 10px rgba(0,255,136,0.4); }
-        .card-info { padding: 12px; }
-        .card-info h3 { font-size: 0.9rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-info p { font-size: 0.75rem; color: #888; }
+/* ===== HUD TOP ===== */
+#hud {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:none; pointer-events:none;
+  padding:8px 10px; gap:8px; flex-wrap:wrap;
+  justify-content:space-between; align-items:flex-start;
+}
+.panel {
+  background:rgba(0,0,0,0.86); border:1px solid #333;
+  border-radius:8px; padding:9px 13px; color:#ddd;
+  font-size:13px; line-height:1.75;
+}
+.panel .lbl { font-size:10px; color:#666; letter-spacing:1px; text-transform:uppercase; margin-bottom:3px; }
 
-        /* Modal Player */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 2000; padding: 20px; overflow-y: auto; }
-        .modal.active { display: flex; justify-content: center; }
-        .m-content { width: 100%; max-width: 1000px; background: #111; border-radius: 15px; overflow: hidden; position: relative; }
-        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; }
-        .video-box iframe { width: 100%; height: 100%; border: none; }
-        
-        .ep-list { padding: 20px; display: flex; gap: 10px; flex-wrap: wrap; background: #181818; }
-        .ep-btn { padding: 8px 15px; background: #333; border: none; color: white; border-radius: 5px; cursor: pointer; font-weight: 600; }
-        .ep-btn.active { background: var(--primary); }
-        
-        .m-details { padding: 25px; border-top: 1px solid #222; }
-        .close-m { position: fixed; top: 20px; right: 20px; background: #fff; color: #000; border: none; width: 40px; height: 40px; border-radius: 50%; font-weight: bold; cursor: pointer; z-index: 2100; }
+/* Stats panel */
+#stat-panel { border-color:#2a7a2a; min-width:170px; }
+#stat-panel .lbl { color:#3d9e3d; }
+#hpbar-bg { background:#300; border-radius:3px; height:7px; width:100%; margin:2px 0; }
+#hpbar    { background:#0f0; border-radius:3px; height:7px; transition:width 0.3s; }
+#mpbar-bg { background:#003; border-radius:3px; height:5px; width:100%; margin-bottom:2px; }
+#mpbar    { background:#44f; border-radius:3px; height:5px; transition:width 0.3s; }
+#xpbar-bg { background:#220; border-radius:3px; height:5px; width:100%; }
+#xpbar    { background:linear-gradient(90deg,#884400,#ffaa00); border-radius:3px; height:5px; transition:width 0.4s; }
 
-        @media (max-width: 600px) { .anime-grid { grid-template-columns: repeat(2, 1fr); } .search-input { width: 150px; } }
-    </style>
+/* Online panel */
+#online-panel { border-color:#224488; max-width:190px; }
+#online-panel .lbl { color:#3a6acc; }
+.p-entry { font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* ===== WEAPON BAR ===== */
+#weapon-bar {
+  position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
+  z-index:100; display:none; gap:6px; pointer-events:auto;
+}
+.wbtn {
+  background:rgba(0,0,0,0.88); border:2px solid #444;
+  border-radius:8px; padding:6px 10px; cursor:pointer;
+  color:#aaa; font-size:13px; font-family:inherit; transition:all 0.15s;
+  display:flex; flex-direction:column; align-items:center; gap:2px; min-width:60px;
+}
+.wbtn .wicon { font-size:20px; }
+.wbtn .wname { font-size:10px; }
+.wbtn .wcd   { font-size:9px; color:#888; }
+.wbtn:hover  { background:#222; }
+.wbtn.active { border-color:#00ff88; background:rgba(0,255,136,0.12); color:#00ff88; }
+.wbtn.cooldown { opacity:0.5; cursor:not-allowed; }
+
+/* ===== ACTION BAR ===== */
+#action-bar {
+  position:fixed; bottom:14px; left:50%; transform:translateX(-50%);
+  z-index:100; display:none; gap:6px; flex-wrap:wrap;
+  justify-content:center; pointer-events:auto;
+}
+.abtn {
+  background:rgba(0,0,0,0.88); color:#ccc; border:1px solid #555;
+  padding:7px 13px; cursor:pointer; border-radius:6px;
+  font-size:13px; font-weight:bold; transition:all 0.15s; font-family:inherit;
+}
+.abtn:hover{background:#333;}
+.abtn.red   {border-color:#cc3333;color:#ff7777;}
+.abtn.green {border-color:#33aa55;color:#66dd88;}
+.abtn.blue  {border-color:#3355cc;color:#7799ff;}
+.abtn.gold  {border-color:#aa7700;color:#ffcc33;}
+
+/* ===== MODAL BACKDROP ===== */
+#modal-backdrop {
+  position:fixed; inset:0; z-index:290;
+  background:rgba(0,0,0,0.6);
+  display:none;
+  cursor:pointer;
+}
+
+/* ===== MODAL BASE ===== */
+.modal {
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  z-index:310; background:#111; border:1px solid #555;
+  border-radius:12px; padding:0; min-width:300px; color:#ddd;
+  display:none; font-family:'Courier New',monospace;
+  pointer-events:auto; max-height:90vh; overflow-y:auto;
+  box-shadow:0 0 40px rgba(0,0,0,0.9);
+}
+.modal-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:14px 18px 10px; border-bottom:1px solid #333;
+  position:sticky; top:0; background:#111; z-index:1;
+}
+.modal-header h2 { font-size:15px; letter-spacing:2px; margin:0; }
+.modal-close {
+  background:rgba(255,255,255,0.08); border:1px solid #555; color:#ccc;
+  width:30px; height:30px; border-radius:50%; cursor:pointer;
+  font-size:16px; display:flex; align-items:center; justify-content:center;
+  font-family:inherit; transition:all 0.15s; flex-shrink:0;
+}
+.modal-close:hover { background:#ff4444; border-color:#ff4444; color:#fff; }
+.modal-body { padding:14px 18px 18px; }
+
+/* ===== STAT SCREEN ===== */
+#stat-screen { border-color:#555; }
+#stat-screen .modal-header h2 { color:#00ff88; }
+.stat-row { display:flex; justify-content:space-between; align-items:center; margin:6px 0; font-size:13px; }
+.stat-row .sval { color:#aaa; }
+.stat-plus {
+  background:#222; border:1px solid #00ff88; color:#00ff88;
+  padding:3px 12px; cursor:pointer; border-radius:4px; font-size:14px; font-family:inherit;
+}
+.stat-plus:hover { background:#00ff88; color:#000; }
+.stat-plus:disabled { opacity:0.3; cursor:not-allowed; }
+#stat-pts-badge {
+  display:inline-block; background:#ffcc00; color:#000;
+  border-radius:10px; padding:2px 10px; font-size:12px; font-weight:bold; margin-left:6px;
+}
+
+/* ===== INVENTORY SCREEN ===== */
+#inv-screen { border-color:#aa7700; min-width:240px; }
+#inv-screen .modal-header h2 { color:#ffcc33; }
+.inv-item {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:7px 0; border-bottom:1px solid #1e1e1e; font-size:13px;
+}
+.inv-use {
+  background:#222; border:1px solid #ffcc33; color:#ffcc33;
+  padding:3px 10px; cursor:pointer; border-radius:4px; font-size:12px; font-family:inherit;
+}
+.inv-use:hover { background:#ffcc33; color:#000; }
+
+/* ===== DUNGEON SCREEN ===== */
+#dungeon-screen { border-color:#8844ff; min-width:320px; }
+#dungeon-screen .modal-header h2 { color:#aa66ff; }
+.dng-entry {
+  padding:10px; border:1px solid #333; border-radius:8px; margin:6px 0;
+  cursor:pointer; transition:all 0.15s;
+}
+.dng-entry:hover { border-color:#8844ff; background:rgba(136,68,255,0.1); }
+.dng-entry .dng-name { color:#cc99ff; font-size:14px; }
+.dng-entry .dng-req  { color:#666; font-size:11px; margin-top:2px; }
+
+/* ===== DUNGEON HUD ===== */
+#dungeon-hud {
+  position:fixed; top:10px; left:50%; transform:translateX(-50%);
+  z-index:200; background:rgba(0,0,0,0.9); border:1px solid #8844ff;
+  border-radius:8px; padding:8px 18px; color:#cc99ff; text-align:center;
+  display:none; min-width:280px; font-size:13px;
+}
+#dungeon-hud .dng-title { font-size:14px; color:#aa66ff; margin-bottom:4px; }
+#dungeon-wave-bar-bg { background:#200; border-radius:4px; height:8px; width:100%; margin-top:4px; }
+#dungeon-wave-bar { background:linear-gradient(90deg,#8800ff,#ff44ff); border-radius:4px; height:8px; transition:width 0.5s; }
+
+/* ===== CHAT ===== */
+#chat-box {
+  position:fixed; bottom:92px; right:10px; z-index:100;
+  width:240px; max-height:160px; overflow-y:auto;
+  background:rgba(0,0,0,0.7); border:1px solid #333; border-radius:8px;
+  padding:7px; display:flex; flex-direction:column; gap:3px;
+}
+.cmsg { font-size:11px; color:#ccc; word-break:break-word; }
+.cmsg .cn { font-weight:bold; }
+.cmsg .ct { color:#444; font-size:9px; }
+#chat-in-row { position:fixed; bottom:92px; right:10px; z-index:101; display:none; width:240px; }
+#chat-in-row input {
+  width:100%; padding:6px 10px; background:rgba(0,0,0,0.93);
+  border:1px solid #555; color:#fff; border-radius:6px;
+  font-size:12px; outline:none; font-family:inherit;
+}
+
+/* ===== NOTIF ===== */
+#notif {
+  position:fixed; top:44%; left:50%; transform:translate(-50%,-50%);
+  z-index:400; font-size:18px; color:#fff; font-weight:bold; text-align:center;
+  pointer-events:none; background:rgba(0,0,0,0.88); padding:12px 24px;
+  border-radius:10px; border:1px solid #666;
+  opacity:0; transition:opacity 0.3s;
+}
+
+/* ===== DAMAGE NUMBERS (CSS class, spawned in JS) ===== */
+.dmg-num {
+  position:fixed; z-index:500; pointer-events:none;
+  font-weight:bold; font-family:inherit;
+  animation:floatUp 0.9s ease-out forwards;
+}
+@keyframes floatUp {
+  0%   { opacity:1; transform:translateY(0) scale(1.2); }
+  100% { opacity:0; transform:translateY(-55px) scale(0.8); }
+}
+
+/* ===== JOYSTICK ===== */
+#joystick-zone { position:fixed; bottom:100px; left:20px; z-index:150; pointer-events:auto; display:none; }
+#joy-base {
+  width:110px; height:110px; border-radius:50%;
+  background:rgba(255,255,255,0.05); border:2px solid rgba(0,255,136,0.3);
+  position:relative; box-shadow:0 0 18px rgba(0,255,136,0.1);
+  touch-action:none; user-select:none;
+}
+#joy-thumb {
+  width:46px; height:46px; border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#00ff88,#007744);
+  border:2px solid rgba(0,255,136,0.7);
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 12px rgba(0,255,136,0.4); pointer-events:none;
+}
+#joy-base.active #joy-thumb { box-shadow:0 0 22px rgba(0,255,136,0.8); }
+
+/* ===== WASD HINT ===== */
+#wasd-hint {
+  position:fixed; bottom:100px; left:18px; z-index:150;
+  pointer-events:none; display:flex; flex-direction:column; align-items:center; gap:3px;
+}
+.wrow { display:flex; gap:3px; }
+.wkey {
+  width:28px; height:28px; border-radius:5px;
+  background:rgba(0,0,0,0.8); border:1px solid #444;
+  color:#666; font-size:12px; font-weight:bold;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.08s;
+}
+.wkey.on { background:rgba(0,255,136,0.2); border-color:#00ff88; color:#00ff88; box-shadow:0 0 7px rgba(0,255,136,0.35); }
+
+/* Death overlay */
+#death-overlay {
+  position:fixed; inset:0; z-index:600; background:rgba(180,0,0,0.55);
+  display:none; align-items:center; justify-content:center; flex-direction:column; gap:12px;
+  font-size:32px; color:#fff; text-shadow:0 2px 20px #f00;
+  pointer-events:none;
+}
+#death-overlay small { font-size:16px; color:#faa; }
+
+/* Attack button (mobile) */
+#atk-btn {
+  position:fixed; bottom:100px; right:20px; z-index:150;
+  width:72px; height:72px; border-radius:50%;
+  background:rgba(255,60,60,0.18); border:2px solid rgba(255,100,100,0.5);
+  color:#ff8888; font-size:26px; cursor:pointer;
+  display:none; align-items:center; justify-content:center;
+  touch-action:none; user-select:none;
+  box-shadow:0 0 16px rgba(255,60,60,0.25); transition:all 0.1s;
+}
+#atk-btn.hit { background:rgba(255,60,60,0.45); box-shadow:0 0 30px rgba(255,60,60,0.6); }
+</style>
 </head>
 <body>
 
-<header>
-    <a href="#" class="logo">AnimeStream</a>
-    <input type="text" class="search-input" id="searchBox" placeholder="Cari 200+ anime..." onkeyup="app.search()">
-</header>
-
-<div class="schedule-bar" id="daySelector"></div>
-
-<div class="main-container">
-    <h2 class="grid-title" id="viewTitle">Sedang Tayang</h2>
-    <div class="anime-grid" id="animeGrid"></div>
+<!-- ===== LOGIN ===== -->
+<div id="login-screen">
+  <h1>⚔️ ISLAND RPG</h1>
+  <p style="color:#555;">Multiplayer · 4 Pulau · Dungeon · Full RPG</p>
+  <input id="name-input" type="text" maxlength="16" placeholder="Nama karakter..." autocomplete="off">
+  <button onclick="startGame()">🎮 MAIN SEKARANG</button>
+  <p class="hint">WASD / Joystick gerak · J Attack · T Chat</p>
 </div>
 
-<div class="modal" id="videoModal">
-    <button class="close-m" onclick="app.close()">✕</button>
-    <div class="m-content">
-        <div id="playerArea" class="video-box"></div>
-        <div class="ep-list" id="epList"></div>
-        <div class="m-details">
-            <h2 id="mTitle"></h2>
-            <p id="mMeta" style="color: var(--accent); font-size: 0.8rem; margin: 5px 0;"></p>
-            <p id="mDesc" style="color: #bbb; margin-top: 10px; font-size: 0.9rem;"></p>
-        </div>
+<!-- ===== HUD ===== -->
+<div id="hud" style="display:flex;">
+  <div class="panel" id="stat-panel">
+    <div class="lbl">📊 Status</div>
+    <div id="s-name" style="color:#00ff88;">-</div>
+    <div id="s-hp" style="font-size:12px;">❤️ 0/0</div>
+    <div id="hpbar-bg"><div id="hpbar" style="width:100%"></div></div>
+    <div id="s-mp" style="font-size:11px;margin-top:2px;">💙 0/0</div>
+    <div id="mpbar-bg"><div id="mpbar" style="width:100%"></div></div>
+    <div id="s-lv" style="font-size:12px;margin-top:2px;">⭐ Lv 1 · <span id="s-gold">🪙0</span></div>
+    <div id="xpbar-bg"><div id="xpbar" style="width:0%"></div></div>
+    <div id="s-weapon" style="font-size:11px;color:#aaa;margin-top:2px;">⚔️ Sword</div>
+  </div>
+  <div class="panel" id="online-panel">
+    <div class="lbl">👥 Online (<span id="p-count">1</span>)</div>
+    <div id="p-list"></div>
+  </div>
+</div>
+
+<!-- Dungeon HUD -->
+<div id="dungeon-hud">
+  <div class="dng-title" id="dng-title">Dungeon</div>
+  <div id="dng-wave-info">Wave 1/3</div>
+  <div id="dungeon-wave-bar-bg"><div id="dungeon-wave-bar" style="width:100%"></div></div>
+</div>
+
+<!-- ===== WEAPON BAR ===== -->
+<div id="weapon-bar">
+  <div class="wbtn active" id="wb-sword" onclick="equipWeapon('sword')">
+    <div class="wicon">🗡️</div><div class="wname">Sword</div><div class="wcd">Fast·Melee</div>
+  </div>
+  <div class="wbtn" id="wb-staff" onclick="equipWeapon('staff')">
+    <div class="wicon">🪄</div><div class="wname">Staff</div><div class="wcd">AOE·Range</div>
+  </div>
+  <div class="wbtn" id="wb-bow" onclick="equipWeapon('bow')">
+    <div class="wicon">🏹</div><div class="wname">Bow</div><div class="wcd">Range</div>
+  </div>
+  <div class="wbtn" id="wb-axe" onclick="equipWeapon('axe')">
+    <div class="wicon">🪓</div><div class="wname">Axe</div><div class="wcd">AOE·Slow</div>
+  </div>
+  <div class="wbtn" id="wb-dagger" onclick="equipWeapon('dagger')">
+    <div class="wicon">🔪</div><div class="wname">Dagger</div><div class="wcd">Very Fast</div>
+  </div>
+</div>
+
+<!-- ===== ACTION BAR ===== -->
+<div id="action-bar">
+  <button class="abtn green" onclick="useItem('heal_potion')">💊 Heal</button>
+  <button class="abtn blue"  onclick="useItem('mana_potion')">🔵 Mana</button>
+  <button class="abtn gold"  onclick="openStats()">📊 Stats</button>
+  <button class="abtn gold"  onclick="openInv()">🎒 Inv</button>
+  <button class="abtn"       onclick="openDungeons()">🏰 Dungeon</button>
+  <button class="abtn red"   id="leave-dng-btn" onclick="leaveDungeon()" style="display:none;">🚪 Leave</button>
+  <button class="abtn"       onclick="openChat()">💬 Chat</button>
+</div>
+
+<!-- MODAL BACKDROP (klik untuk tutup) -->
+<div id="modal-backdrop" onclick="closeAllModals()"></div>
+
+<!-- ===== STAT ALLOCATE ===== -->
+<div id="stat-screen" class="modal">
+  <div class="modal-header">
+    <h2>📊 CHARACTER STATS</h2>
+    <button class="modal-close" onclick="closeAllModals()">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="stat-row"><span>Level</span><span class="sval" id="ss-lv">1</span></div>
+    <div class="stat-row"><span>HP</span><span class="sval" id="ss-hp">-</span></div>
+    <div class="stat-row"><span>MP</span><span class="sval" id="ss-mp">-</span></div>
+    <div class="stat-row"><span>ATK</span><span class="sval" id="ss-atk">-</span></div>
+    <div class="stat-row"><span>DEF</span><span class="sval" id="ss-def">-</span></div>
+    <div class="stat-row"><span>CRIT</span><span class="sval" id="ss-crit">-</span></div>
+    <div style="color:#ffcc33;font-size:12px;margin:10px 0 6px;">
+      Stat Points: <span id="stat-pts-badge">0</span>
     </div>
+    <div class="stat-row">
+      <span>💪 STR <span id="ss-str" style="color:#888;font-size:11px;"></span></span>
+      <button class="stat-plus" id="btn-str" onclick="allocStat('str')">＋</button>
+    </div>
+    <div class="stat-row">
+      <span>🧠 INT <span id="ss-int" style="color:#888;font-size:11px;"></span></span>
+      <button class="stat-plus" id="btn-int" onclick="allocStat('intel')">＋</button>
+    </div>
+    <div class="stat-row">
+      <span>💨 AGI <span id="ss-agi" style="color:#888;font-size:11px;"></span></span>
+      <button class="stat-plus" id="btn-agi" onclick="allocStat('agi')">＋</button>
+    </div>
+    <div style="color:#555;font-size:11px;margin-top:10px;line-height:1.6;">
+      STR → HP · ATK · DEF<br>INT → MP<br>AGI → SPD · CRIT
+    </div>
+  </div>
+</div>
+
+<!-- ===== INVENTORY ===== -->
+<div id="inv-screen" class="modal">
+  <div class="modal-header">
+    <h2>🎒 INVENTORY</h2>
+    <button class="modal-close" onclick="closeAllModals()">✕</button>
+  </div>
+  <div class="modal-body">
+    <div id="inv-list"><div style="color:#555;font-size:12px;">Kosong</div></div>
+  </div>
+</div>
+
+<!-- ===== DUNGEON SELECT ===== -->
+<div id="dungeon-screen" class="modal">
+  <div class="modal-header">
+    <h2>🏰 PILIH DUNGEON</h2>
+    <button class="modal-close" onclick="closeAllModals()">✕</button>
+  </div>
+  <div class="modal-body">
+    <div id="dng-list"></div>
+  </div>
+</div>
+
+<!-- Chat -->
+<div id="chat-box"></div>
+<div id="chat-in-row"><input id="chat-in" type="text" maxlength="80" placeholder="Pesan... (Enter kirim, Esc batal)"></div>
+
+<!-- Notif -->
+<div id="notif"></div>
+
+<!-- Death overlay -->
+<div id="death-overlay"><span>💀 MATI</span><small id="death-timer">Respawn dalam 4 detik...</small></div>
+
+<!-- Joystick (mobile) -->
+<div id="joystick-zone">
+  <div id="joy-base"><div id="joy-thumb"></div></div>
+</div>
+
+<!-- Attack button (mobile) -->
+<div id="atk-btn" onclick="triggerAttack()">⚔️</div>
+
+<!-- WASD hint (desktop) -->
+<div id="wasd-hint">
+  <div class="wrow"><div class="wkey" id="kw">W</div></div>
+  <div class="wrow">
+    <div class="wkey" id="ka">A</div>
+    <div class="wkey" id="ks">S</div>
+    <div class="wkey" id="kd">D</div>
+  </div>
 </div>
 
 <script>
-const app = {
-    days: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"],
-    today: "",
-    
-    // DATABASE 200+ (Contoh 10 data awal dengan ID YouTube yang benar)
-    // Untuk nambah, ganti 'ytId' dengan kode setelah v= di URL YouTube
-    db: [
-        { title: "Solo Leveling", day: "Sabtu", time: "23:30", genre: "Action", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400", desc: "Sung Jin-woo naik level dari E-Rank menjadi Hunter terkuat.", episodes: [{n: 1, ytId: "e8YBesRKq_U"}, {n: 2, ytId: "fzQ6gRAEoy0"}] },
-        { title: "Frieren", day: "Jumat", time: "22:00", genre: "Fantasy", img: "https://images.unsplash.com/photo-1614728263952-84ea206f2c40?w=400", desc: "Kisah penyihir abadi setelah mengalahkan Raja Iblis.", episodes: [{n: 1, ytId: "fzQ6gRAEoy0"}] },
-        { title: "One Piece", day: "Minggu", time: "09:00", genre: "Adventure", img: "https://images.unsplash.com/photo-1613376023733-0a73315d9b06?w=400", desc: "Luffy mencari harta karun legendaris One Piece.", episodes: [{n: 1100, ytId: "fzQ6gRAEoy0"}] },
-        { title: "Blue Archive", day: "Minggu", time: "23:00", genre: "Sci-Fi", img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=400", desc: "Petualangan para siswi sekolah militer Kivotos.", episodes: [{n: 1, ytId: "fzQ6gRAEoy0"}] },
-        { title: "Slime S3", day: "Jumat", time: "22:30", genre: "Isekai", img: "https://images.unsplash.com/photo-1541562232579-512a21360020?w=400", desc: "Rimuru Tempest membangun negara monster.", episodes: [{n: 1, ytId: "fzQ6gRAEoy0"}] },
-        { title: "Kaiju No. 8", day: "Sabtu", time: "22:00", genre: "Action", img: "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?w=400", desc: "Kafka Hibino berubah menjadi Kaiju untuk membasmi monster.", episodes: [{n: 1, ytId: "fzQ6gRAEoy0"}] }
-    ],
-
-    init() {
-        this.today = this.days[new Date().getDay()];
-        this.renderSchedule();
-        this.renderGrid(this.db);
-    },
-
-    renderSchedule() {
-        const container = document.getElementById('daySelector');
-        container.innerHTML = `<button class="day-btn active" onclick="app.filter('All', this)">Semua</button>` +
-            this.days.map(d => `
-                <button class="day-btn ${d === this.today ? 'today-active' : ''}" onclick="app.filter('${d}', this)">
-                    ${d} ${d === this.today ? '•' : ''}
-                </button>
-            `).join('');
-    },
-
-    renderGrid(data) {
-        const grid = document.getElementById('animeGrid');
-        grid.innerHTML = data.map(a => `
-            <div class="card" onclick="app.open('${a.title}')">
-                ${a.day === this.today ? '<div class="badge">HARI INI</div>' : ''}
-                <img src="${a.img}" class="poster">
-                <div class="card-info">
-                    <h3>${a.title}</h3>
-                    <p>${a.day} • ${a.time} WIB</p>
-                </div>
-            </div>
-        `).join('');
-    },
-
-    open(title) {
-        const anime = this.db.find(a => a.title === title);
-        document.getElementById('mTitle').innerText = anime.title;
-        document.getElementById('mDesc').innerText = anime.desc;
-        document.getElementById('mMeta').innerText = `${anime.genre} | Rilis: ${anime.day} ${anime.time} WIB`;
-        
-        // Render Tombol Episode
-        const epContainer = document.getElementById('epList');
-        epContainer.innerHTML = anime.episodes.map((ep, idx) => `
-            <button class="ep-btn ${idx === 0 ? 'active' : ''}" onclick="app.play('${ep.ytId}', this)">
-                Ep ${ep.n}
-            </button>
-        `).join('');
-
-        // Putar Episode 1 otomatis
-        this.play(anime.episodes[0].ytId);
-        
-        document.getElementById('videoModal').classList.add('active');
-        document.body.style.overflow = 'hidden';
-    },
-
-    play(id, btn) {
-        if(btn) {
-            document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-        // FIXED YOUTUBE URL
-        const player = document.getElementById('playerArea');
-        player.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0&showinfo=0" allowfullscreen allow="autoplay"></iframe>`;
-    },
-
-    filter(day, btn) {
-        document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filtered = day === 'All' ? this.db : this.db.filter(a => a.day === day);
-        this.renderGrid(filtered);
-        document.getElementById('viewTitle').innerText = day === 'All' ? 'Sedang Tayang' : `Rilis Hari ${day}`;
-    },
-
-    search() {
-        const q = document.getElementById('searchBox').value.toLowerCase();
-        this.renderGrid(this.db.filter(a => a.title.toLowerCase().includes(q)));
-    },
-
-    close() {
-        document.getElementById('videoModal').classList.remove('active');
-        document.getElementById('playerArea').innerHTML = '';
-        document.body.style.overflow = 'auto';
-    }
+// ================================================================
+// GLOBAL STATE
+// ================================================================
+let socket, phaserGame, myId;
+let myStats = {
+  hp:100, maxHp:100, mp:60, maxMp:60,
+  lv:1, xp:0, xpNext:100, gold:0,
+  atk:10, def:3, spd:100, crit:5,
+  str:5, intel:5, agi:5, statPoints:0,
+  weapon:'sword', name:'', inventory:{},
+  dead:false, dungeonId:null,
 };
+let weaponsData = {};
+let itemsData   = {};
+let dungeonsData= {};
 
-app.init();
+let scene, playerRect, playerLabel;
+let otherPlayers = {};   // id → {rect, label, hpBar, hpBg}
+let enemyObjs    = {};   // id → {rect, label, hpBg, hpBar, data}
+let projectiles  = [];   // phaser graphics for projectiles
+let dmgNumbers   = [];
+let attackTarget = null; // nearest enemy id for auto-attack
+let autoAttackTimer = 0;
+let targetPos = null;
+let moveTimer = 0;
+const MOVE_SPEED = 220;
+
+// Input
+const keys = {w:false,a:false,s:false,d:false};
+const joy  = {active:false, dx:0, dy:0, touchId:null};
+const isMobile = ('ontouchstart' in window) || /Android|iPhone|iPad/i.test(navigator.userAgent);
+
+// Attack cooldown per weapon
+let lastAttackTime = 0;
+let inDungeon = false;
+let currentDungeonName = '';
+
+// ================================================================
+// LOGIN
+// ================================================================
+document.getElementById('name-input').addEventListener('keydown', e => { if(e.key==='Enter') startGame(); });
+
+function startGame() {
+  const name = document.getElementById('name-input').value.trim() || 'Petualang';
+  myStats.name = name;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('hud').style.display = 'flex';
+  document.getElementById('weapon-bar').style.display = 'flex';
+  document.getElementById('action-bar').style.display = 'flex';
+  initInput();
+  initSocket();
+  initPhaser();
+}
+
+// ================================================================
+// SOCKET
+// ================================================================
+function initSocket() {
+  socket = io();
+
+  socket.on('connect', () => {
+    socket.emit('player_join', { name: myStats.name });
+  });
+
+  socket.on('init', (data) => {
+    myId = data.self.id;
+    weaponsData  = data.weapons  || {};
+    itemsData    = data.items    || {};
+    dungeonsData = data.dungeons || {};
+    applyStats(data.self);
+
+    // Spawn enemies
+    Object.values(data.enemies || {}).forEach(e => {
+      if (scene) spawnEnemyObj(e);
+      else pendingEnemies.push(e);
+    });
+    // Other players
+    Object.values(data.players || {}).forEach(p => {
+      if (p.id !== myId) {
+        if (scene) addOtherPlayer(p);
+        else pendingPlayers.push(p);
+      }
+    });
+    updateHUD();
+    buildDungeonList();
+  });
+
+  socket.on('stats_update', (data) => {
+    applyStats(data);
+    updateHUD();
+    if (document.getElementById('stat-screen').style.display !== 'none') updateStatScreen();
+    if (document.getElementById('inv-screen').style.display !== 'none') buildInvList();
+  });
+
+  socket.on('player_joined', (p) => {
+    showNotif(`🟢 ${p.name} bergabung!`);
+    if (scene) addOtherPlayer(p);
+    else pendingPlayers.push(p);
+    updateOnlineList();
+  });
+
+  socket.on('player_left', (d) => {
+    showNotif(`🔴 ${d.name} keluar`);
+    removeOtherPlayer(d.id);
+    updateOnlineList();
+  });
+
+  socket.on('player_moved', (d) => {
+    const op = otherPlayers[d.id];
+    if (!op) return;
+    op.rect.x = d.x; op.rect.y = d.y;
+    op.label.x = d.x - 26; op.label.y = d.y - 30;
+  });
+
+  socket.on('enemies_move', (list) => {
+    list.forEach(e => {
+      const obj = enemyObjs[e.id];
+      if (!obj) return;
+      obj.rect.x = e.x; obj.rect.y = e.y;
+      obj.label.x = e.x - 18; obj.label.y = e.y - obj.rect.height/2 - 24;
+      obj.hpBg.x  = e.x - 20; obj.hpBg.y  = e.y - obj.rect.height/2 - 14;
+      obj.hpBar.x = e.x - 20; obj.hpBar.y = e.y - obj.rect.height/2 - 14;
+      obj.data.x = e.x; obj.data.y = e.y;
+      if (e.hp !== undefined) updateEnemyHP(e.id, e.hp, e.maxHp);
+    });
+  });
+
+  socket.on('enemy_hit', (res) => {
+    showDamageNumber(res.dmg, res.crit, enemyObjs[res.enemyId]);
+    updateEnemyHP(res.enemyId, res.enemyHp, null);
+    if (res.killed) {
+      setTimeout(() => destroyEnemyObj(res.enemyId), 200);
+      if (res.dropItem && itemsData[res.dropItem]) {
+        showNotif(`✨ Drop: ${itemsData[res.dropItem].icon} ${itemsData[res.dropItem].name}`);
+      }
+    }
+  });
+
+  socket.on('enemy_spawned', (e) => {
+    if (scene) spawnEnemyObj(e);
+  });
+
+  socket.on('enemies_batch', (batch) => {
+    Object.values(batch).forEach(e => {
+      if (scene) spawnEnemyObj(e);
+    });
+  });
+
+  socket.on('enemy_attack', (d) => {
+    const obj = enemyObjs[d.enemyId];
+    if (obj) flashEnemy(obj);
+  });
+
+  socket.on('take_damage', (d) => {
+    myStats.hp = d.hp; myStats.maxHp = d.maxHp;
+    updateHUD();
+    flashScreen();
+    showDamageNumberPlayer(d.dmg);
+  });
+
+  socket.on('player_dead', () => {
+    myStats.dead = true;
+    showDeathOverlay();
+  });
+
+  socket.on('player_respawn', (d) => {
+    myStats.dead = false;
+    myStats.hp = d.hp;
+    if (playerRect) {
+      playerRect.x = d.x;
+      playerRect.y = d.y;
+      if (playerRect.body) { playerRect.body.setVelocity(0); }
+    }
+    hideDeathOverlay();
+    updateHUD();
+  });
+
+  socket.on('level_up', (d) => {
+    myStats.lv = d.lv; myStats.statPoints = d.statPoints;
+    showNotif(`⭐ LEVEL UP! Sekarang Lv ${d.lv}! +3 Stat Points`);
+    updateHUD();
+  });
+
+  // Dungeon events
+  socket.on('dungeon_enter', (d) => {
+    inDungeon = true;
+    currentDungeonName = d.name;
+    document.getElementById('dungeon-hud').style.display = 'block';
+    document.getElementById('leave-dng-btn').style.display = 'inline-block';
+    document.getElementById('dungeon-screen').style.display = 'none';
+    updateDungeonHUD(d.wave + 1, d.maxWaves);
+    showNotif(`🏰 Masuk ${d.name}!`);
+  });
+
+  socket.on('dungeon_wave', (d) => {
+    updateDungeonHUD(d.wave, d.maxWaves);
+    showNotif(d.isBossWave ? `👹 BOSS WAVE! ${d.count} musuh!` : `⚔️ Wave ${d.wave}/${d.maxWaves} · ${d.count} musuh`);
+  });
+
+  socket.on('dungeon_next_wave', (d) => {
+    showNotif(`✅ Wave clear! Bersiap Wave ${d.wave}...`);
+  });
+
+  socket.on('dungeon_clear', (d) => {
+    inDungeon = false;
+    document.getElementById('dungeon-hud').style.display = 'none';
+    document.getElementById('leave-dng-btn').style.display = 'none';
+    const item = d.item && itemsData[d.item] ? `${itemsData[d.item].icon} ${itemsData[d.item].name}` : '';
+    showNotif(`🏆 DUNGEON CLEAR! +${d.xp} XP · +${d.gold}🪙 ${item}`);
+  });
+
+  socket.on('broadcast_msg', (d) => {
+    showNotif(d.msg);
+    addChat({ name:'📢 System', color:0xffffff, msg: d.msg, time:'' });
+  });
+
+  socket.on('error_msg', (msg) => showNotif('⚠️ ' + msg));
+  socket.on('item_used', (d) => {
+    showNotif(`${d.item.icon} ${d.item.name} digunakan!`);
+  });
+
+  socket.on('chat_message', (d) => addChat(d));
+
+  socket.on('disconnect', () => showNotif('❌ Koneksi terputus!'));
+}
+
+let pendingEnemies = [], pendingPlayers = [];
+
+// ================================================================
+// PHASER
+// ================================================================
+function initPhaser() {
+  const config = {
+    type: Phaser.AUTO,
+    width: window.innerWidth, height: window.innerHeight,
+    backgroundColor: '#000810',
+    physics: { default:'arcade', arcade:{ debug:false } },
+    scene: { preload, create, update },
+    parent: document.body,
+    scale: { mode: Phaser.Scale.RESIZE, autoCenter: Phaser.Scale.CENTER_BOTH }
+  };
+  phaserGame = new Phaser.Game(config);
+}
+
+function preload() {}
+
+function create() {
+  scene = this;
+  this.physics.world.setBounds(0, 0, 5000, 600);
+
+  drawWorldMap(this);
+
+  // Player
+  playerRect = this.add.rectangle(200, 300, 40, 40, 0x00ff88);
+  playerRect.setStrokeStyle(2, 0x00cc66);
+  this.physics.add.existing(playerRect);
+  playerRect.body.setCollideWorldBounds(true);
+  playerRect.setDepth(10);
+
+  playerLabel = this.add.text(174, 270, myStats.name + ' Lv1', {
+    fontSize:'12px', fill:'#00ff88', fontFamily:'Courier New',
+    stroke:'#000', strokeThickness:3
+  });
+  playerLabel.setDepth(11);
+
+  this.cameras.main.startFollow(playerRect, true, 0.12, 0.12);
+  this.cameras.main.setBounds(0, 0, 5000, 600);
+
+  // Click to move
+  this.input.on('pointerdown', (ptr) => {
+    if (chatOpen) return;
+    // Check if click is on a UI element
+    targetPos = { x: ptr.worldX, y: ptr.worldY };
+  });
+
+  // Pending
+  pendingEnemies.forEach(e => spawnEnemyObj(e));
+  pendingPlayers.forEach(p => addOtherPlayer(p));
+  pendingEnemies = []; pendingPlayers = [];
+  updateHUD();
+}
+
+function drawWorldMap(s) {
+  // Sea background tiles
+  for (let x = 0; x < 5000; x += 200) {
+    for (let y = 0; y < 600; y += 200) {
+      s.add.rectangle(x + 100, y + 100, 200, 200, 0x000d1a);
+    }
+  }
+
+  const islands = [
+    { color:0x0d2d0d, border:0x1a5c1a, label:'🌿 PULAU 1\nSAFE ZONE\nLv 1–5',  lc:'#55cc55' },
+    { color:0x1a1500, border:0x5c4a00, label:'⚔️ PULAU 2\nLv 6–12',             lc:'#ccaa33' },
+    { color:0x1a0800, border:0x5c2800, label:'🔥 PULAU 3\nLv 13–20',            lc:'#cc6633' },
+    { color:0x100005, border:0x440011, label:'💀 PULAU 4\nLv 21–30\nBOSS ZONE', lc:'#cc3333' },
+  ];
+  islands.forEach((isl, i) => {
+    const cx = i * 800 + 400;
+    s.add.rectangle(cx, 300, 790, 570, isl.color).setDepth(0);
+    const b = s.add.rectangle(cx, 300, 790, 570).setDepth(1);
+    b.setStrokeStyle(2, isl.border);
+    s.add.text(i * 800 + 18, 20, isl.label, { fontSize:'15px', fill:isl.lc, fontFamily:'Courier New' }).setDepth(2);
+    // Water gaps
+    if (i > 0) s.add.text(i * 800 - 75, 285, '🌊\n🌊\n🌊', { fontSize:'18px' }).setDepth(2);
+  });
+
+  // Dungeon portals
+  const portals = [
+    { x:650,  y:100, key:'forest_cave', label:'🌲 Cave' },
+    { x:1450, y:100, key:'dark_dungeon', label:'🌑 Dark Dng' },
+    { x:3000, y:100, key:'boss_lair',   label:'👹 Boss Lair' },
+  ];
+  portals.forEach(p => {
+    const port = s.add.circle(p.x, p.y, 28, 0x220066).setDepth(3);
+    port.setStrokeStyle(3, 0x8844ff);
+    s.add.text(p.x - 28, p.y + 34, p.label, { fontSize:'11px', fill:'#aa66ff', fontFamily:'Courier New', stroke:'#000', strokeThickness:2 }).setDepth(4);
+    // Pulsing effect stored
+    scene.tweens && scene.tweens.add({
+      targets: port, scaleX: 1.15, scaleY: 1.15, duration:900, yoyo:true, repeat:-1
+    });
+    // Click portal
+    port.setInteractive();
+    port.on('pointerdown', () => {
+      openDungeonDirect(p.key);
+    });
+  });
+
+  // Dungeon area (right side)
+  s.add.rectangle(4500, 300, 900, 570, 0x08001a).setDepth(0);
+  s.add.rectangle(4500, 300, 900, 570).setStrokeStyle(3, 0x440088).setDepth(1);
+  s.add.text(4300, 20, '🏰 DUNGEON\nZONE', { fontSize:'18px', fill:'#aa66ff', fontFamily:'Courier New' }).setDepth(2);
+}
+
+let updateCount = 0;
+function update(time, delta) {
+  if (!playerRect || !scene || myStats.dead) {
+    if (playerRect && playerRect.body) playerRect.body.setVelocity(0);
+    return;
+  }
+
+  // Movement
+  let vx = 0, vy = 0;
+  if (keys.a) vx -= MOVE_SPEED; if (keys.d) vx += MOVE_SPEED;
+  if (keys.w) vy -= MOVE_SPEED; if (keys.s) vy += MOVE_SPEED;
+  if (joy.active) { vx = joy.dx * MOVE_SPEED; vy = joy.dy * MOVE_SPEED; }
+
+  if (vx !== 0 || vy !== 0) {
+    if (vx !== 0 && vy !== 0) { vx *= 0.707; vy *= 0.707; }
+    playerRect.body.setVelocity(vx, vy);
+    targetPos = null;
+  } else if (targetPos) {
+    scene.physics.moveToObject(playerRect, targetPos, MOVE_SPEED);
+    if (Phaser.Math.Distance.Between(playerRect.x, playerRect.y, targetPos.x, targetPos.y) < 10) {
+      playerRect.body.setVelocity(0); targetPos = null;
+    }
+  } else {
+    playerRect.body.setVelocity(0);
+  }
+
+  // Sync label
+  playerLabel.x = playerRect.x - 26;
+  playerLabel.y = playerRect.y - 32;
+
+  // Emit position throttled
+  moveTimer += delta;
+  if (moveTimer > 80) {
+    moveTimer = 0;
+    if (socket) socket.emit('player_move', { x: playerRect.x, y: playerRect.y });
+  }
+
+  // Auto attack nearest enemy
+  autoAttackTimer += delta;
+  const wpnData = weaponsData[myStats.weapon];
+  const cd = wpnData ? wpnData.cooldown : 600;
+  if (autoAttackTimer > cd) {
+    autoAttackTimer = 0;
+    doAutoAttack();
+  }
+
+  // Safe zone regen (Pulau 1)
+  if (!inDungeon && playerRect.x < 790 && myStats.hp < myStats.maxHp) {
+    myStats.hp = Math.min(myStats.maxHp, myStats.hp + 0.3);
+    updateHPBar();
+  }
+}
+
+// ================================================================
+// AUTO ATTACK
+// ================================================================
+function doAutoAttack() {
+  if (!socket || myStats.dead) return;
+  const wpn = weaponsData[myStats.weapon];
+  if (!wpn) return;
+  const range = wpn.range;
+
+  let nearestId = null, nearestDist = Infinity;
+  Object.values(enemyObjs).forEach(obj => {
+    if (!obj || !obj.data || obj.data.hp <= 0) return;
+    // Only attack enemies in same zone
+    if (inDungeon !== !!obj.data.dungeonId) return;
+    const d = Phaser.Math.Distance.Between(playerRect.x, playerRect.y, obj.data.x, obj.data.y);
+    if (d < range && d < nearestDist) { nearestDist = d; nearestId = obj.data.id; }
+  });
+
+  if (!nearestId && !wpn.aoe) return;
+
+  // Show attack animation
+  showAttackEffect(nearestId, wpn);
+
+  socket.emit('attack_enemy', { enemyId: nearestId });
+}
+
+function triggerAttack() {
+  // Manual attack button (mobile)
+  autoAttackTimer = 9999; // Force attack now
+  doAutoAttack();
+  document.getElementById('atk-btn').classList.add('hit');
+  setTimeout(() => document.getElementById('atk-btn').classList.remove('hit'), 150);
+}
+
+function showAttackEffect(enemyId, wpn) {
+  if (!scene) return;
+  const eObj = enemyObjs[enemyId];
+
+  if (wpn.proj && eObj) {
+    // Projectile arc
+    const px = playerRect.x, py = playerRect.y;
+    const ex = eObj.data.x, ey = eObj.data.y;
+    const proj = scene.add.circle(px, py, 5, wpn.color || 0xffffff).setDepth(20);
+    scene.tweens.add({
+      targets: proj, x: ex, y: ey, duration: 250, ease:'Linear',
+      onComplete: () => proj.destroy()
+    });
+  } else if (!wpn.proj) {
+    // Slash effect
+    const slash = scene.add.circle(playerRect.x, playerRect.y, wpn.range * 0.6, wpn.color || 0xffffff, 0.25).setDepth(20);
+    scene.tweens.add({
+      targets: slash, alpha: 0, scaleX: 1.5, scaleY: 1.5, duration: 200,
+      onComplete: () => slash.destroy()
+    });
+  }
+}
+
+// ================================================================
+// ENEMY OBJECTS
+// ================================================================
+function spawnEnemyObj(e) {
+  if (enemyObjs[e.id] || !scene) return;
+  const size = e.size || 28;
+  const rect = scene.add.rectangle(e.x, e.y, size, size, e.color || 0xff3333).setDepth(5);
+  rect.setStrokeStyle(1.5, 0xff9999);
+
+  const lbl = scene.add.text(e.x - 18, e.y - size/2 - 24, `${e.name||'?'} Lv${e.lv}`, {
+    fontSize:'10px', fill:'#ffaaaa', fontFamily:'Courier New',
+    stroke:'#000', strokeThickness:2
+  }).setDepth(6);
+
+  // HP bar
+  const hpBg  = scene.add.rectangle(e.x, e.y - size/2 - 12, 40, 5, 0x440000).setDepth(6);
+  const hpBar = scene.add.rectangle(e.x - 20, e.y - size/2 - 12, 40, 5, 0xff2222).setOrigin(0, 0.5).setDepth(7);
+
+  enemyObjs[e.id] = { rect, label: lbl, hpBg, hpBar, data: { ...e } };
+}
+
+function updateEnemyHP(eid, hp, maxHp) {
+  const obj = enemyObjs[eid];
+  if (!obj) return;
+  if (maxHp !== null && maxHp !== undefined) obj.data.maxHp = maxHp;
+  obj.data.hp = hp;
+  const pct = Math.max(0, hp / (obj.data.maxHp || 1));
+  obj.hpBar.scaleX = pct;
+  obj.hpBar.fillColor = pct > 0.5 ? 0x44ff44 : pct > 0.25 ? 0xffaa00 : 0xff2222;
+}
+
+function destroyEnemyObj(eid) {
+  const obj = enemyObjs[eid];
+  if (!obj) return;
+  // Death flash
+  if (obj.rect && obj.rect.active) {
+    scene.tweens.add({
+      targets: obj.rect, alpha: 0, scaleX: 1.8, scaleY: 1.8, duration: 200,
+      onComplete: () => {
+        obj.rect.destroy(); obj.label.destroy(); obj.hpBg.destroy(); obj.hpBar.destroy();
+      }
+    });
+  } else {
+    try { obj.rect.destroy(); obj.label.destroy(); obj.hpBg.destroy(); obj.hpBar.destroy(); } catch(e) {}
+  }
+  delete enemyObjs[eid];
+}
+
+function flashEnemy(obj) {
+  if (!obj || !obj.rect || !obj.rect.active) return;
+  const orig = obj.rect.fillColor;
+  obj.rect.setFillStyle(0xffffff);
+  setTimeout(() => { if (obj.rect && obj.rect.active) obj.rect.setFillStyle(orig); }, 80);
+}
+
+// ================================================================
+// OTHER PLAYERS
+// ================================================================
+function addOtherPlayer(p) {
+  if (otherPlayers[p.id] || p.id === myId || !scene) return;
+  const col = typeof p.color === 'number' ? p.color : 0x00cfff;
+  const rect = scene.add.rectangle(p.x||300, p.y||300, 38, 38, col).setDepth(8);
+  rect.setStrokeStyle(2, 0xffffff);
+  const label = scene.add.text((p.x||300)-26, (p.y||300)-34,
+    `${p.name||'?'} Lv${p.lv||1}`,
+    { fontSize:'11px', fill:'#fff', fontFamily:'Courier New', stroke:'#000', strokeThickness:3 }
+  ).setDepth(9);
+  otherPlayers[p.id] = { rect, label, data: p };
+  updateOnlineList();
+}
+
+function removeOtherPlayer(id) {
+  const op = otherPlayers[id];
+  if (!op) return;
+  try { op.rect.destroy(); op.label.destroy(); } catch(e){}
+  delete otherPlayers[id];
+  updateOnlineList();
+}
+
+// ================================================================
+// DAMAGE NUMBERS
+// ================================================================
+function showDamageNumber(dmg, crit, enemyObj) {
+  if (!enemyObj) return;
+  const el = document.createElement('div');
+  el.className = 'dmg-num';
+  el.textContent = (crit ? '💥' : '') + dmg;
+  el.style.color  = crit ? '#ff4' : '#fff';
+  el.style.fontSize = crit ? '22px' : '16px';
+  el.style.textShadow = '0 1px 4px #000';
+
+  // Convert world to screen coords
+  const cam = phaserGame.scene.scenes[0].cameras.main;
+  const sx = (enemyObj.data.x - cam.scrollX) * cam.zoom + (window.innerWidth / 2 - cam.width / 2 * cam.zoom);
+  const sy = (enemyObj.data.y - cam.scrollY - 20) * cam.zoom + (window.innerHeight / 2 - cam.height / 2 * cam.zoom);
+  el.style.left = (sx + Math.random()*30 - 15) + 'px';
+  el.style.top  = sy + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+function showDamageNumberPlayer(dmg) {
+  const el = document.createElement('div');
+  el.className = 'dmg-num';
+  el.textContent = '⚠️ -' + dmg;
+  el.style.color = '#ff4444';
+  el.style.fontSize = '18px';
+  el.style.left = (window.innerWidth/2 + Math.random()*40 - 20) + 'px';
+  el.style.top  = (window.innerHeight/2 - 60) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+let flashTimeout;
+function flashScreen() {
+  document.body.style.boxShadow = 'inset 0 0 80px rgba(255,0,0,0.6)';
+  clearTimeout(flashTimeout);
+  flashTimeout = setTimeout(() => document.body.style.boxShadow = '', 200);
+}
+
+// ================================================================
+// HUD
+// ================================================================
+function applyStats(d) {
+  Object.assign(myStats, d);
+}
+
+function updateHUD() {
+  document.getElementById('s-name').textContent = `👤 ${myStats.name}`;
+  document.getElementById('s-hp').textContent   = `❤️ ${Math.floor(myStats.hp)}/${myStats.maxHp}`;
+  document.getElementById('s-mp').textContent   = `💙 ${Math.floor(myStats.mp)}/${myStats.maxMp}`;
+  document.getElementById('s-lv').innerHTML     = `⭐ Lv ${myStats.lv} <span id="s-gold">🪙${myStats.gold||0}</span>`;
+  document.getElementById('s-weapon').textContent = `⚔️ ${myStats.weapon?.toUpperCase()||'SWORD'}`;
+  updateHPBar();
+  document.getElementById('mpbar').style.width = `${(myStats.mp/Math.max(1,myStats.maxMp))*100}%`;
+  document.getElementById('xpbar').style.width = `${(myStats.xp/Math.max(1,myStats.xpNext))*100}%`;
+  updateOnlineList();
+}
+
+function updateHPBar() {
+  const pct = (myStats.hp / Math.max(1, myStats.maxHp)) * 100;
+  document.getElementById('hpbar').style.width = pct + '%';
+  document.getElementById('hpbar').style.background = pct > 50 ? '#0f0' : pct > 25 ? '#fa0' : '#f33';
+  document.getElementById('s-hp').textContent = `❤️ ${Math.floor(myStats.hp)}/${myStats.maxHp}`;
+}
+
+function updateOnlineList() {
+  const all = [
+    { name: myStats.name, lv: myStats.lv, self: true },
+    ...Object.values(otherPlayers).map(p => ({ name: p.data.name, lv: p.data.lv || 1 }))
+  ];
+  document.getElementById('p-count').textContent = all.length;
+  document.getElementById('p-list').innerHTML = all.map(p =>
+    `<div class="p-entry">${p.self ? '🟢' : '🔵'} ${p.name} Lv${p.lv}</div>`
+  ).join('');
+}
+
+function updateDungeonHUD(wave, maxWaves) {
+  document.getElementById('dng-title').textContent = currentDungeonName;
+  document.getElementById('dng-wave-info').textContent = `Wave ${wave} / ${maxWaves}`;
+  document.getElementById('dungeon-wave-bar').style.width = `${(wave/maxWaves)*100}%`;
+}
+
+// ================================================================
+// WEAPON SELECT
+// ================================================================
+function equipWeapon(key) {
+  if (!socket) return;
+  myStats.weapon = key;
+  document.querySelectorAll('.wbtn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById(`wb-${key}`);
+  if (el) el.classList.add('active');
+  socket.emit('equip_weapon', { weapon: key });
+  document.getElementById('s-weapon').textContent = `⚔️ ${key.toUpperCase()}`;
+}
+
+// ================================================================
+// MODAL SYSTEM — terpusat
+// ================================================================
+const MODALS = ['stat-screen','inv-screen','dungeon-screen'];
+
+function openModal(id) {
+  MODALS.forEach(m => { document.getElementById(m).style.display = 'none'; });
+  document.getElementById(id).style.display = 'block';
+  document.getElementById('modal-backdrop').style.display = 'block';
+  const canvas = document.querySelector('canvas');
+  if (canvas) canvas.style.pointerEvents = 'none';
+}
+
+function closeAllModals() {
+  MODALS.forEach(m => { document.getElementById(m).style.display = 'none'; });
+  document.getElementById('modal-backdrop').style.display = 'none';
+  const canvas = document.querySelector('canvas');
+  if (canvas) canvas.style.pointerEvents = 'auto';
+}
+
+// ================================================================
+// ITEMS
+// ================================================================
+function useItem(key) {
+  if (!socket) return;
+  const inv = myStats.inventory || {};
+  if (!inv[key] || inv[key] <= 0) { showNotif(`❌ Tidak punya item itu!`); return; }
+  socket.emit('use_item', { itemKey: key });
+}
+
+function buildInvList() {
+  const inv  = myStats.inventory || {};
+  const el   = document.getElementById('inv-list');
+  const keys = Object.keys(inv).filter(k => (inv[k] || 0) > 0);
+  if (!keys.length) {
+    el.innerHTML = '<div style="color:#555;font-size:12px;padding:6px 0;">Inventory kosong</div>';
+    return;
+  }
+  el.innerHTML = keys.map(k => {
+    const item = itemsData[k] || { name: k, icon: '📦' };
+    return `<div class="inv-item">
+      <span>${item.icon} ${item.name} <span style="color:#666">×${inv[k]}</span></span>
+      <button class="inv-use" onclick="useItemClose('${k}')">Pakai</button>
+    </div>`;
+  }).join('');
+}
+
+function useItemClose(key) {
+  useItem(key);
+  if (myStats.inventory && myStats.inventory[key]) {
+    myStats.inventory[key]--;
+    if (myStats.inventory[key] <= 0) delete myStats.inventory[key];
+  }
+  buildInvList();
+}
+
+function openInv() {
+  buildInvList();
+  openModal('inv-screen');
+}
+
+// ================================================================
+// STAT ALLOCATION
+// ================================================================
+function openStats() {
+  updateStatScreen();
+  openModal('stat-screen');
+}
+
+function updateStatScreen() {
+  document.getElementById('ss-lv').textContent   = myStats.lv;
+  document.getElementById('ss-hp').textContent   = `${Math.floor(myStats.hp)} / ${myStats.maxHp}`;
+  document.getElementById('ss-mp').textContent   = `${Math.floor(myStats.mp)} / ${myStats.maxMp}`;
+  document.getElementById('ss-atk').textContent  = myStats.atk;
+  document.getElementById('ss-def').textContent  = myStats.def;
+  document.getElementById('ss-crit').textContent = (myStats.crit || 0) + '%';
+  const pts = myStats.statPoints || 0;
+  document.getElementById('stat-pts-badge').textContent = pts;
+  document.getElementById('ss-str').textContent  = `(${myStats.str})`;
+  document.getElementById('ss-int').textContent  = `(${myStats.intel})`;
+  document.getElementById('ss-agi').textContent  = `(${myStats.agi})`;
+  ['btn-str','btn-int','btn-agi'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = pts <= 0;
+  });
+}
+
+function allocStat(stat) {
+  if (!socket || (myStats.statPoints || 0) <= 0) { showNotif('❌ Tidak ada stat point!'); return; }
+  socket.emit('stat_point', { stat });
+}
+
+// ================================================================
+// DUNGEON
+// ================================================================
+function buildDungeonList() {
+  const el = document.getElementById('dng-list');
+  const entries = Object.entries(dungeonsData);
+  if (!entries.length) { el.innerHTML = '<div style="color:#555;font-size:12px;">Loading...</div>'; return; }
+  el.innerHTML = entries.map(([key, dng]) =>
+    `<div class="dng-entry" onclick="enterDungeonFromMenu('${key}')">
+      <div class="dng-name">${dng.name}</div>
+      <div class="dng-req">Min Level: ${dng.minLv} · Klik untuk masuk</div>
+    </div>`
+  ).join('');
+}
+
+function openDungeons() {
+  buildDungeonList();
+  openModal('dungeon-screen');
+}
+
+function enterDungeonFromMenu(key) {
+  closeAllModals();
+  if (!socket) return;
+  socket.emit('enter_dungeon', { key });
+}
+
+function openDungeonDirect(key) {
+  closeAllModals();
+  if (!socket) return;
+  socket.emit('enter_dungeon', { key });
+}
+
+function leaveDungeon() {
+  if (!socket) return;
+  socket.emit('leave_dungeon');
+  inDungeon = false;
+  document.getElementById('dungeon-hud').style.display = 'none';
+  document.getElementById('leave-dng-btn').style.display = 'none';
+  showNotif('🚪 Keluar dari dungeon');
+}
+
+// ================================================================
+// DEATH
+// ================================================================
+let deathCountdown;
+function showDeathOverlay() {
+  const overlay = document.getElementById('death-overlay');
+  overlay.style.display = 'flex';
+  let secs = 4;
+  document.getElementById('death-timer').textContent = `Respawn dalam ${secs} detik...`;
+  clearInterval(deathCountdown);
+  deathCountdown = setInterval(() => {
+    secs--;
+    document.getElementById('death-timer').textContent = secs > 0 ? `Respawn dalam ${secs} detik...` : 'Respawning...';
+    if (secs <= 0) clearInterval(deathCountdown);
+  }, 1000);
+}
+function hideDeathOverlay() {
+  document.getElementById('death-overlay').style.display = 'none';
+}
+
+// ================================================================
+// CHAT
+// ================================================================
+let chatOpen = false;
+function openChat() {
+  chatOpen = true;
+  document.getElementById('chat-in-row').style.display = 'block';
+  document.getElementById('chat-box').style.bottom = '115px';
+  document.getElementById('chat-in').focus();
+}
+function closeChat() {
+  chatOpen = false;
+  document.getElementById('chat-in-row').style.display = 'none';
+  document.getElementById('chat-box').style.bottom = '92px';
+}
+document.getElementById('chat-in').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const msg = e.target.value.trim();
+    if (msg && socket) socket.emit('chat', msg);
+    e.target.value = ''; closeChat();
+  } else if (e.key === 'Escape') closeChat();
+});
+function addChat(d) {
+  const box = document.getElementById('chat-box');
+  const div = document.createElement('div');
+  div.className = 'cmsg';
+  const col = typeof d.color === 'number' ? '#' + d.color.toString(16).padStart(6,'0') : '#aaa';
+  div.innerHTML = `<span class="cn" style="color:${col}">${d.name}</span>: ${d.msg} <span class="ct">${d.time||''}</span>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  while (box.children.length > 60) box.removeChild(box.firstChild);
+}
+
+// ================================================================
+// NOTIF
+// ================================================================
+let notifTmr;
+function showNotif(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg; el.style.opacity = '1';
+  clearTimeout(notifTmr);
+  notifTmr = setTimeout(() => el.style.opacity = '0', 3000);
+}
+
+// ================================================================
+// INPUT
+// ================================================================
+function initInput() {
+  if (isMobile) {
+    document.getElementById('joystick-zone').style.display = 'block';
+    document.getElementById('wasd-hint').style.display = 'none';
+    document.getElementById('atk-btn').style.display = 'flex';
+    initJoystick();
+  } else {
+    document.getElementById('wasd-hint').style.display = 'flex';
+    initWASD();
+  }
+}
+
+// WASD
+function initWASD() {
+  const map = { KeyW:'w', KeyA:'a', KeyS:'s', KeyD:'d',
+                ArrowUp:'w', ArrowLeft:'a', ArrowDown:'s', ArrowRight:'d' };
+  document.addEventListener('keydown', e => {
+    // Escape tutup semua modal / chat
+    if (e.key === 'Escape') {
+      if (chatOpen) { closeChat(); return; }
+      closeAllModals(); return;
+    }
+    if (chatOpen) return;
+    const k = map[e.code];
+    if (k) { keys[k] = true; updateWASDVis(); targetPos = null; }
+    if (e.code === 'KeyJ') triggerAttack();
+    if (e.key === 't' || e.key === 'T') openChat();
+    if (e.code === 'KeyI') openInv();
+    if (e.code === 'KeyC') openStats();
+  });
+  document.addEventListener('keyup', e => {
+    const k = { KeyW:'w', KeyA:'a', KeyS:'s', KeyD:'d',
+                ArrowUp:'w', ArrowLeft:'a', ArrowDown:'s', ArrowRight:'d' }[e.code];
+    if (k) { keys[k] = false; updateWASDVis(); }
+  });
+}
+function updateWASDVis() {
+  document.getElementById('kw').classList.toggle('on', keys.w);
+  document.getElementById('ka').classList.toggle('on', keys.a);
+  document.getElementById('ks').classList.toggle('on', keys.s);
+  document.getElementById('kd').classList.toggle('on', keys.d);
+}
+
+// JOYSTICK
+function initJoystick() {
+  const base = document.getElementById('joy-base');
+  const thumb = document.getElementById('joy-thumb');
+  const R = 55;
+  function center() {
+    const r = base.getBoundingClientRect();
+    return { cx: r.left + r.width/2, cy: r.top + r.height/2 };
+  }
+  base.addEventListener('touchstart', e => {
+    const t = e.changedTouches[0];
+    joy.active = true; joy.touchId = t.identifier;
+    base.classList.add('active'); targetPos = null;
+    e.preventDefault();
+  }, {passive:false});
+  base.addEventListener('touchmove', e => {
+    if (!joy.active) return;
+    let t = null;
+    for (const tt of e.changedTouches) if (tt.identifier === joy.touchId) { t = tt; break; }
+    if (!t) return;
+    const {cx, cy} = center();
+    let dx = t.clientX - cx, dy = t.clientY - cy;
+    const d = Math.sqrt(dx*dx+dy*dy);
+    if (d > R) { dx = dx/d*R; dy = dy/d*R; }
+    joy.dx = dx/R; joy.dy = dy/R;
+    thumb.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+    e.preventDefault();
+  }, {passive:false});
+  const end = e => {
+    for (const t of e.changedTouches) {
+      if (t.identifier === joy.touchId) {
+        joy.active = false; joy.dx = 0; joy.dy = 0; joy.touchId = null;
+        thumb.style.transform = 'translate(-50%,-50%)';
+        base.classList.remove('active'); break;
+      }
+    }
+  };
+  base.addEventListener('touchend', end, {passive:false});
+  base.addEventListener('touchcancel', end, {passive:false});
+}
+
+window.addEventListener('resize', () => {
+  if (phaserGame) phaserGame.scale.resize(window.innerWidth, window.innerHeight);
+});
 </script>
 </body>
 </html>
