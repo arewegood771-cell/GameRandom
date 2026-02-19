@@ -1,17 +1,17 @@
 {
-  "name": "island-rpg-multiplayer",
+  "name": "tembak-multiplayer",
   "version": "1.0.0",
-  "description": "Island RPG Multiplayer - Node.js + Socket.io + Phaser 3",
+  "description": "Tembak! - Multiplayer Arena Shooter",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "node server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
-    "socket.io": "^4.7.2"
+    "ws": "^8.16.0"
   },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
